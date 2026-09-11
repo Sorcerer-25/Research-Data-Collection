@@ -4,7 +4,7 @@ import React, { useState, Suspense } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
 import Link from "next/link";
 import { useAuth } from "@/lib/auth-context";
-import { Moon, Lock, Mail, AlertCircle, Loader2, ArrowRight, Sparkles, ShieldCheck } from "lucide-react";
+import { Moon, Lock, Mail, AlertCircle, Loader2, ArrowRight } from "lucide-react";
 
 function LoginForm() {
   const [email, setEmail] = useState<string>("");
@@ -31,29 +31,9 @@ function LoginForm() {
     setIsSubmitting(false);
 
     if (result.success) {
-      if (email.toLowerCase() === "admin@sleepstudy.org") {
-        router.push("/admin");
-      } else {
-        router.push(redirectPath);
-      }
+      router.push(redirectPath);
     } else {
       setErrorMessage(result.error || "Unable to sign in. Please verify your credentials.");
-    }
-  };
-
-  const handleQuickDemoLogin = async (demoEmail: string, demoRole: "participant" | "admin") => {
-    setEmail(demoEmail);
-    setPassword("password123");
-    setIsSubmitting(true);
-    const result = await login(demoEmail, "password123");
-    setIsSubmitting(false);
-
-    if (result.success) {
-      if (demoRole === "admin") {
-        router.push("/admin");
-      } else {
-        router.push("/dashboard");
-      }
     }
   };
 
@@ -120,18 +100,6 @@ function LoginForm() {
           </div>
         </div>
 
-        <div className="flex items-center justify-between text-xs text-slate-500 dark:text-slate-400">
-          <label className="flex items-center gap-1.5 cursor-pointer">
-            <input
-              type="checkbox"
-              defaultChecked
-              disabled
-              className="rounded border-slate-300 text-indigo-600 focus:ring-indigo-500"
-            />
-            <span>Persistent Browser Session</span>
-          </label>
-        </div>
-
         <button
           type="submit"
           id="login-submit-btn"
@@ -152,33 +120,8 @@ function LoginForm() {
         </button>
       </form>
 
-      {/* Quick Demo Logins for Fast Testing */}
-      <div className="pt-2 border-t border-slate-200/80 dark:border-slate-800">
-        <p className="text-[11px] font-bold text-slate-500 dark:text-slate-400 uppercase tracking-wider text-center mb-2.5 flex items-center justify-center gap-1">
-          <Sparkles className="w-3.5 h-3.5 text-amber-500" />
-          Quick Demo Sign In
-        </p>
-        <div className="grid grid-cols-2 gap-2">
-          <button
-            type="button"
-            onClick={() => handleQuickDemoLogin("john@example.com", "participant")}
-            className="px-3 py-2 text-xs font-semibold rounded-xl border border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-800 hover:bg-indigo-50 hover:text-indigo-600 dark:hover:bg-indigo-950/40 text-slate-700 dark:text-slate-200 transition-colors"
-          >
-            Participant (John)
-          </button>
-          <button
-            type="button"
-            onClick={() => handleQuickDemoLogin("admin@sleepstudy.org", "admin")}
-            className="px-3 py-2 text-xs font-semibold rounded-xl border border-indigo-200 dark:border-indigo-800 bg-indigo-50/70 dark:bg-indigo-950/50 hover:bg-indigo-100 text-indigo-700 dark:text-indigo-300 transition-colors flex items-center justify-center gap-1"
-          >
-            <ShieldCheck className="w-3.5 h-3.5" />
-            Researcher (Admin)
-          </button>
-        </div>
-      </div>
-
       {/* Register Link */}
-      <div className="text-center text-xs text-slate-500 dark:text-slate-400 pt-1">
+      <div className="text-center text-xs text-slate-500 dark:text-slate-400 pt-2 border-t border-slate-200/80 dark:border-slate-800">
         New participant?{" "}
         <Link href="/register" className="font-bold text-indigo-600 dark:text-indigo-400 hover:underline">
           Register for study
@@ -201,4 +144,3 @@ export default function LoginPage() {
     </div>
   );
 }
-

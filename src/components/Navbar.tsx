@@ -4,10 +4,10 @@ import React, { useState } from "react";
 import Link from "next/link";
 import { usePathname, useRouter } from "next/navigation";
 import { useAuth } from "@/lib/auth-context";
-import { Moon, ShieldCheck, User, LogOut, Sparkles, Menu, X, PlusCircle, LayoutDashboard } from "lucide-react";
+import { Moon, ShieldCheck, LogOut, Menu, X, PlusCircle, LayoutDashboard } from "lucide-react";
 
 export default function Navbar() {
-  const { user, role, logout, isConfiguredWithSupabase, switchMockAccount } = useAuth();
+  const { user, role, logout } = useAuth();
   const pathname = usePathname();
   const router = useRouter();
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
@@ -17,13 +17,15 @@ export default function Navbar() {
     router.push("/login");
   };
 
+  const isAdmin = user && role === "admin";
+
   return (
     <header className="sticky top-0 z-40 w-full border-b border-slate-200/80 dark:border-slate-800/80 bg-white/90 dark:bg-slate-900/90 backdrop-blur-md">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex items-center justify-between h-16">
           {/* Brand / Logo */}
           <div className="flex items-center gap-3">
-            <Link href={user ? (role === "admin" ? "/admin" : "/dashboard") : "/login"} className="flex items-center gap-2.5 group">
+            <Link href={user ? (isAdmin ? "/admin" : "/dashboard") : "/"} className="flex items-center gap-2.5 group">
               <div className="w-10 h-10 rounded-xl bg-gradient-to-tr from-indigo-600 to-indigo-500 flex items-center justify-center text-white shadow-md shadow-indigo-500/20 group-hover:scale-105 transition-transform">
                 <Moon className="w-5 h-5 fill-indigo-200 text-white" />
               </div>
@@ -44,7 +46,7 @@ export default function Navbar() {
             {user ? (
               <>
                 <nav className="flex items-center gap-1">
-                  {role === "admin" ? (
+                  {isAdmin ? (
                     <>
                       <Link
                         href="/admin"
@@ -101,8 +103,8 @@ export default function Navbar() {
                     <span className="text-xs font-semibold text-slate-900 dark:text-white leading-tight">
                       {user.full_name}
                     </span>
-                    <span className="text-[11px] text-slate-500 dark:text-slate-400 capitalize flex items-center justify-end gap-1">
-                      {role === "admin" ? (
+                    <span className="text-[11px] text-slate-500 dark:text-slate-400 capitalize">
+                      {isAdmin ? (
                         <span className="text-indigo-600 dark:text-indigo-400 font-semibold">Researcher (Admin)</span>
                       ) : (
                         "Study Participant"
@@ -163,9 +165,9 @@ export default function Navbar() {
               <>
                 <div className="px-3 py-2 bg-slate-50 dark:bg-slate-900 rounded-lg mb-2">
                   <p className="text-sm font-semibold text-slate-900 dark:text-white">{user.full_name}</p>
-                  <p className="text-xs text-slate-500">{user.email} • {role === "admin" ? "Admin Researcher" : "Participant"}</p>
+                  <p className="text-xs text-slate-500">{user.email} • {isAdmin ? "Admin Researcher" : "Participant"}</p>
                 </div>
-                {role === "admin" ? (
+                {isAdmin ? (
                   <>
                     <Link
                       href="/admin"
@@ -231,43 +233,6 @@ export default function Navbar() {
           </div>
         )}
       </div>
-
-      {/* Quick Demo Mode Banner / Switcher if running in offline demo mode */}
-      {!isConfiguredWithSupabase && (
-        <div className="bg-slate-100 dark:bg-slate-900 border-t border-b border-slate-200 dark:border-slate-800 px-4 py-1.5 text-xs text-slate-600 dark:text-slate-300">
-          <div className="max-w-7xl mx-auto flex flex-wrap items-center justify-between gap-2">
-            <span className="flex items-center gap-1.5 text-slate-700 dark:text-slate-300">
-              <Sparkles className="w-3.5 h-3.5 text-amber-500" />
-              <span className="font-semibold text-slate-900 dark:text-white">Live Evaluation Mode:</span> Instant local data adapter active (Supabase ready).
-            </span>
-            <div className="flex items-center gap-2">
-              <span className="text-slate-500">Switch Account:</span>
-              <button
-                onClick={() => {
-                  switchMockAccount("participant");
-                  router.push("/dashboard");
-                }}
-                className={`px-2 py-0.5 rounded text-[11px] font-medium transition-colors ${
-                  role === "participant" ? "bg-indigo-600 text-white font-bold" : "bg-white dark:bg-slate-800 border border-slate-300 dark:border-slate-700 hover:bg-slate-50"
-                }`}
-              >
-                Participant (John Doe)
-              </button>
-              <button
-                onClick={() => {
-                  switchMockAccount("admin");
-                  router.push("/admin");
-                }}
-                className={`px-2 py-0.5 rounded text-[11px] font-medium transition-colors ${
-                  role === "admin" ? "bg-indigo-600 text-white font-bold" : "bg-white dark:bg-slate-800 border border-slate-300 dark:border-slate-700 hover:bg-slate-50"
-                }`}
-              >
-                Researcher (Admin)
-              </button>
-            </div>
-          </div>
-        </div>
-      )}
     </header>
   );
 }

@@ -10,7 +10,6 @@ import {
   getSupabaseClient,
   isSupabaseConfigured,
 } from "./supabase/client";
-import { MockStorageManager } from "./supabase/mock-adapter";
 
 interface AuthContextType {
   user: Participant | null;
@@ -21,7 +20,6 @@ interface AuthContextType {
   register: (fullName: string, email: string, password: string) => Promise<{ success: boolean; error?: string }>;
   logout: () => Promise<void>;
   refreshUser: () => Promise<void>;
-  switchMockAccount: (role: UserRole) => void;
 }
 
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
@@ -98,30 +96,6 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     setIsLoading(false);
   };
 
-  const switchMockAccount = (targetRole: UserRole) => {
-    if (targetRole === "admin") {
-      const adminUser: Participant = {
-        id: "p-admin-01",
-        full_name: "Dr. Sarah Chen",
-        email: "admin@sleepstudy.org",
-        role: "admin",
-        created_at: "2026-08-30T10:00:00Z",
-      };
-      MockStorageManager.setSessionUser(adminUser);
-      setUser(adminUser);
-    } else {
-      const participantUser: Participant = {
-        id: "p-001",
-        full_name: "John Doe",
-        email: "john@example.com",
-        role: "participant",
-        created_at: "2026-08-31T14:20:00Z",
-      };
-      MockStorageManager.setSessionUser(participantUser);
-      setUser(participantUser);
-    }
-  };
-
   return (
     <AuthContext.Provider
       value={{
@@ -133,7 +107,6 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
         register,
         logout,
         refreshUser,
-        switchMockAccount,
       }}
     >
       {children}

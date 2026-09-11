@@ -156,19 +156,6 @@ export async function authLogin(
   const participants = MockStorageManager.getParticipants();
   const normalizedEmail = email.trim().toLowerCase();
 
-  // Special check for demo admin
-  if (normalizedEmail === "admin@sleepstudy.org") {
-    const adminUser = participants.find((p) => p.email === "admin@sleepstudy.org") || {
-      id: "p-admin-01",
-      full_name: "Dr. Sarah Chen",
-      email: "admin@sleepstudy.org",
-      role: "admin" as const,
-      created_at: new Date().toISOString(),
-    };
-    MockStorageManager.setSessionUser(adminUser);
-    return { user: adminUser, error: null };
-  }
-
   const foundUser = participants.find((p) => p.email.toLowerCase() === normalizedEmail);
   if (!foundUser) {
     return { user: null, error: "Invalid email or password." };
