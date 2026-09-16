@@ -26,7 +26,7 @@ export default function AdminStatsCards({ stats }: AdminStatsCardsProps) {
             </span>
           </div>
           <p className="text-xs text-slate-500 dark:text-slate-400">
-            {stats.active_participants_count} active data {stats.active_participants_count === 1 ? "contributor" : "contributors"} out of {stats.total_participants} total registered {stats.total_participants === 1 ? "account" : "accounts"}
+            {stats.active_participants_count} active data {stats.active_participants_count === 1 ? "contributor" : "contributors"} out of {stats.total_participants} enrolled study {stats.total_participants === 1 ? "participant" : "participants"} (admins excluded)
           </p>
         </div>
 

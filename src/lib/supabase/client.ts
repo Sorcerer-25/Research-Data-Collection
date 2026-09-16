@@ -364,8 +364,12 @@ export async function getAdminStudyData(): Promise<AdminStudyData> {
     };
   });
 
-  const totalParticipants = participants.length;
-  const activeParticipantsCount = participantSummaries.filter((p) => p.completed_days > 0).length;
+  // Separate actual participants from admins for study metrics
+  const actualParticipants = participants.filter((p) => p.role !== "admin");
+  const actualParticipantSummaries = participantSummaries.filter((p) => p.role !== "admin");
+
+  const totalParticipants = actualParticipants.length;
+  const activeParticipantsCount = actualParticipantSummaries.filter((p) => p.completed_days > 0).length;
   const totalEntries = logs.length;
   const expectedEntries = totalParticipants * config.targetDays;
   const overallCompletionPercentage = expectedEntries > 0

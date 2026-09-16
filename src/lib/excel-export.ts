@@ -135,7 +135,9 @@ export async function exportStudyDataToExcel(data: AdminStudyData, filename?: st
     { header: "Maximum Sleep", key: "max_sleep", width: 18 },
   ];
 
-  data.participantSummaries.forEach((summary, index) => {
+  data.participantSummaries
+    .filter((s) => s.role !== "admin")
+    .forEach((summary, index) => {
     const avgHours = formatDurationDecimalHours(summary.average_sleep_minutes);
     const minFormatted = summary.completed_days > 0 ? formatDurationHoursMinutes(summary.min_sleep_minutes) : "--";
     const maxFormatted = summary.completed_days > 0 ? formatDurationHoursMinutes(summary.max_sleep_minutes) : "--";
