@@ -49,8 +49,6 @@ export async function exportStudyDataToExcel(data: AdminStudyData, filename?: st
     { header: "Wake Time", key: "wake_time", width: 14 },
     { header: "Total Sleep Minutes", key: "total_sleep_minutes", width: 20 },
     { header: "Total Sleep Hours", key: "total_sleep_hours", width: 18 },
-    { header: "Sleep Quality (1-5)", key: "sleep_quality", width: 20 },
-    { header: "Notes", key: "notes", width: 35 },
     { header: "Created At", key: "created_at", width: 22 },
     { header: "Updated At", key: "updated_at", width: 22 },
   ];
@@ -86,8 +84,6 @@ export async function exportStudyDataToExcel(data: AdminStudyData, filename?: st
       wake_time: formatTime12Hour(log.wake_time),
       total_sleep_minutes: totalMinutes,
       total_sleep_hours: decimalHours,
-      sleep_quality: log.sleep_quality ?? "",
-      notes: log.notes || "",
       created_at: log.created_at ? new Date(log.created_at).toLocaleString() : "",
       updated_at: log.updated_at ? new Date(log.updated_at).toLocaleString() : "",
     });
@@ -103,7 +99,7 @@ export async function exportStudyDataToExcel(data: AdminStudyData, filename?: st
           fgColor: { argb: "FFF8FAFC" },
         };
       }
-      if (colNumber === 8 || colNumber === 9 || colNumber === 10) {
+      if (colNumber === 8 || colNumber === 9) {
         cell.alignment = { horizontal: "right" };
       }
     });
@@ -137,7 +133,6 @@ export async function exportStudyDataToExcel(data: AdminStudyData, filename?: st
     { header: "Average Sleep Hours", key: "avg_sleep_hours", width: 22 },
     { header: "Minimum Sleep", key: "min_sleep", width: 18 },
     { header: "Maximum Sleep", key: "max_sleep", width: 18 },
-    { header: "Average Sleep Quality", key: "avg_quality", width: 22 },
   ];
 
   data.participantSummaries.forEach((summary, index) => {
@@ -156,7 +151,6 @@ export async function exportStudyDataToExcel(data: AdminStudyData, filename?: st
       avg_sleep_hours: avgHours,
       min_sleep: minFormatted,
       max_sleep: maxFormatted,
-      avg_quality: summary.average_quality ?? "N/A",
     });
 
     const isEven = index % 2 === 0;
@@ -169,7 +163,7 @@ export async function exportStudyDataToExcel(data: AdminStudyData, filename?: st
           fgColor: { argb: "FFF8FAFC" },
         };
       }
-      if ([4, 5, 6, 7, 8, 9, 10, 11].includes(colNumber)) {
+      if ([4, 5, 6, 7, 8, 9, 10].includes(colNumber)) {
         cell.alignment = { horizontal: "right" };
       }
     });

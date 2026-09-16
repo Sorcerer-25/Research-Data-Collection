@@ -155,8 +155,6 @@ export default function SleepForm({
         bed_time: bedTime,
         wake_time: wakeTime,
         total_sleep_minutes: calculatedMinutes,
-        sleep_quality: null,
-        notes: null,
       });
 
       if (error || !data) {

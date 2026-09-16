@@ -6,7 +6,6 @@ import {
   formatDateDisplay,
   formatDurationHoursMinutes,
   formatTime12Hour,
-  SLEEP_QUALITY_LABELS,
 } from "@/lib/sleep-calculations";
 import { getStudyConfig, getStudyDayNumber } from "@/lib/study-config";
 import { exportStudyDataToExcel } from "@/lib/excel-export";
@@ -69,9 +68,8 @@ export default function SleepEntriesTable({
           const term = searchTerm.toLowerCase();
           const matchName = participant.full_name.toLowerCase().includes(term);
           const matchEmail = participant.email.toLowerCase().includes(term);
-          const matchNotes = (log.notes || "").toLowerCase().includes(term);
           const matchDate = log.log_date.includes(term);
-          if (!matchName && !matchEmail && !matchNotes && !matchDate) {
+          if (!matchName && !matchEmail && !matchDate) {
             return false;
           }
         }
@@ -157,7 +155,7 @@ export default function SleepEntriesTable({
           <Search className="w-3.5 h-3.5 text-slate-400 absolute left-3 top-1/2 -translate-y-1/2" />
           <input
             type="text"
-            placeholder="Search participant / notes..."
+            placeholder="Search participant or date..."
             value={searchTerm}
             onChange={(e) => {
               setSearchTerm(e.target.value);

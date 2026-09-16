@@ -24,8 +24,8 @@ WHERE email = 'researcher@example.com';
 ## Tables Overview
 
 - `public.participants`: User profile linked to `auth.users`, storing `full_name`, `email`, `role`, and timestamps.
-- `public.study_settings`: Configurable study windows (`study_start_date`, `study_end_date`, `target_days`, `is_active`).
-- `public.sleep_logs`: Daily sleep logs storing `participant_id`, `log_date`, `bed_time`, `wake_time`, `total_sleep_minutes`, `sleep_quality` (1–5), and `notes`. Enforces `UNIQUE(participant_id, log_date)` to prevent duplicates.
+- `public.study_settings`: Configurable study defaults and target days.
+- `public.sleep_logs`: Daily sleep logs storing `participant_id`, `log_date`, `bed_time`, `wake_time`, and `total_sleep_minutes`. Enforces `UNIQUE(participant_id, log_date)` to prevent duplicate entries per day.
 
 ## Security & Row Level Security (RLS)
 
