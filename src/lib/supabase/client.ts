@@ -345,10 +345,6 @@ export async function getAdminStudyData(): Promise<AdminStudyData> {
   const averageSleepMinutes = totalEntries > 0 ? Math.round(totalSleepMinutesSum / totalEntries) : 0;
   const averageSleepFormatted = formatDurationHoursMinutes(averageSleepMinutes);
 
-  const qualityLogs = logs.filter((l) => typeof l.sleep_quality === "number" && l.sleep_quality > 0);
-  const qualitySum = qualityLogs.reduce((acc, l) => acc + (l.sleep_quality || 0), 0);
-  const averageQuality = qualityLogs.length > 0 ? Number((qualitySum / qualityLogs.length).toFixed(1)) : null;
-
   // Calculate participant summaries
   const participantSummaries: ParticipantSummary[] = studyParticipants.map((p) => {
     const pLogs = logs.filter((l) => l.participant_id === p.id);
@@ -360,11 +356,6 @@ export async function getAdminStudyData(): Promise<AdminStudyData> {
     const pAvgMinutes = completedDays > 0 ? Math.round(pMinutesSum / completedDays) : 0;
     const minSleep = pMinutes.length > 0 ? Math.min(...pMinutes) : 0;
     const maxSleep = pMinutes.length > 0 ? Math.max(...pMinutes) : 0;
-
-    const pQualities = pLogs.filter((l) => typeof l.sleep_quality === "number" && l.sleep_quality > 0).map((l) => l.sleep_quality as number);
-    const pAvgQuality = pQualities.length > 0
-      ? Number((pQualities.reduce((a, b) => a + b, 0) / pQualities.length).toFixed(1))
-      : null;
 
     const sortedDates = [...pLogs].sort((a, b) => b.log_date.localeCompare(a.log_date));
     const lastLogDate = sortedDates.length > 0 ? sortedDates[0].log_date : null;
@@ -380,7 +371,6 @@ export async function getAdminStudyData(): Promise<AdminStudyData> {
       average_sleep_formatted: formatDurationHoursMinutes(pAvgMinutes),
       min_sleep_minutes: minSleep,
       max_sleep_minutes: maxSleep,
-      average_quality: pAvgQuality,
       last_log_date: lastLogDate,
     };
   });
@@ -395,7 +385,6 @@ export async function getAdminStudyData(): Promise<AdminStudyData> {
       overall_completion_percentage: overallCompletionPercentage,
       average_sleep_minutes: averageSleepMinutes,
       average_sleep_formatted: averageSleepFormatted,
-      average_quality: averageQuality,
     },
     participantSummaries,
   };

@@ -141,21 +141,12 @@ export default function ParticipantOverviewTable({
                   <ArrowUpDown className="w-3 h-3 text-slate-400" />
                 </div>
               </th>
-              <th
-                onClick={() => handleSort("average_quality")}
-                className="py-3 px-4 cursor-pointer hover:text-slate-900 dark:hover:text-white"
-              >
-                <div className="flex items-center gap-1">
-                  Avg Quality
-                  <ArrowUpDown className="w-3 h-3 text-slate-400" />
-                </div>
-              </th>
             </tr>
           </thead>
           <tbody className="divide-y divide-slate-200/70 dark:divide-slate-800 text-slate-800 dark:text-slate-200">
             {filteredSummaries.length === 0 ? (
               <tr>
-                <td colSpan={6} className="py-8 text-center text-slate-500 dark:text-slate-400">
+                <td colSpan={5} className="py-8 text-center text-slate-500 dark:text-slate-400">
                   No participants matched the filter criteria.
                 </td>
               </tr>
@@ -217,15 +208,6 @@ export default function ParticipantOverviewTable({
                       <span className="text-xs text-slate-400 ml-1">
                         ({p.average_sleep_minutes}m)
                       </span>
-                    </td>
-                    <td className="py-3 px-4">
-                      {p.average_quality !== null ? (
-                        <span className="font-semibold text-amber-600 dark:text-amber-400">
-                          ★ {p.average_quality} / 5.0
-                        </span>
-                      ) : (
-                        <span className="text-slate-400">--</span>
-                      )}
                     </td>
                   </tr>
                 );
