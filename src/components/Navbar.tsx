@@ -29,15 +29,9 @@ export default function Navbar() {
               <div className="w-10 h-10 rounded-xl bg-gradient-to-tr from-indigo-600 to-indigo-500 flex items-center justify-center text-white shadow-md shadow-indigo-500/20 group-hover:scale-105 transition-transform">
                 <Moon className="w-5 h-5 fill-indigo-200 text-white" />
               </div>
-              <div>
-                <span className="font-bold text-slate-900 dark:text-white tracking-tight text-lg flex items-center gap-1.5">
-                  Sleep Study
-                  <span className="text-[10px] uppercase font-semibold px-2 py-0.5 rounded-full bg-indigo-50 dark:bg-indigo-950/60 text-indigo-600 dark:text-indigo-400 border border-indigo-200/60 dark:border-indigo-800">
-                    Research
-                  </span>
-                </span>
-                <p className="text-[11px] text-slate-500 dark:text-slate-400 hidden sm:block">14-Day Circadian Rhythm Protocol</p>
-              </div>
+              <span className="font-bold text-slate-900 dark:text-white tracking-tight text-xl">
+                Sleep Study
+              </span>
             </Link>
           </div>
 

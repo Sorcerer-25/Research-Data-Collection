@@ -214,7 +214,7 @@ export async function getParticipantLogs(participantId: string): Promise<SleepLo
       .order("log_date", { ascending: false });
 
     if (error) {
-      console.error("Error fetching participant logs:", error);
+      console.error("Error fetching participant logs:", error.message || error.code || error);
       return [];
     }
     return data || [];
