@@ -26,7 +26,6 @@ import {
 export default function ParticipantDashboard() {
   const { user, role, isLoading: authLoading, logout } = useAuth();
   const router = useRouter();
-  const config = getStudyConfig();
 
   const [logs, setLogs] = useState<SleepLog[]>([]);
   const [isLoadingLogs, setIsLoadingLogs] = useState<boolean>(true);
@@ -66,6 +65,20 @@ export default function ParticipantDashboard() {
   const todayStr = new Date().toISOString().split("T")[0];
   const isTodayLogged = logs.some((l) => l.log_date === todayStr);
   const firstName = user.full_name.split(" ")[0] || "Participant";
+
+  // Determine participant's dynamic start date (earliest log date, registration date, or today)
+  const participantStartDate = React.useMemo(() => {
+    if (logs.length > 0) {
+      const sortedDates = [...logs].map((l) => l.log_date).sort();
+      return sortedDates[0];
+    }
+    if (user?.created_at) {
+      return user.created_at.split("T")[0];
+    }
+    return getStudyConfig().startDate;
+  }, [logs, user]);
+
+  const config = React.useMemo(() => getStudyConfig(participantStartDate), [participantStartDate]);
 
   const scrollToForm = () => {
     setTimeout(() => {
@@ -140,12 +153,13 @@ export default function ParticipantDashboard() {
       </div>
 
       {/* 2. Study Progress Component */}
-      <StudyProgress logs={logs} onSelectDate={handleOpenFormForDate} />
+      <StudyProgress config={config} logs={logs} onSelectDate={handleOpenFormForDate} />
 
       {/* 3. Sleep Entry Form (Toggleable / Clickable) */}
       {showLogForm && (
         <div id="sleep-form-section" className="scroll-mt-20">
           <SleepForm
+            config={config}
             participantId={user.id}
             existingLogs={logs}
             initialDate={selectedFormDate}
@@ -157,6 +171,7 @@ export default function ParticipantDashboard() {
 
       {/* 4. Sleep History List */}
       <SleepHistoryList
+        config={config}
         logs={logs}
         onEditLog={handleEditLog}
         onRefresh={() => fetchLogs(user.id)}

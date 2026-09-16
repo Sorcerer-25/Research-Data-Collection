@@ -3,16 +3,18 @@
 import React from "react";
 import Link from "next/link";
 import { SleepLog } from "@/types";
-import { getAllStudyDays, getStudyConfig, getStudyDayNumber } from "@/lib/study-config";
+import { getAllStudyDays, getStudyConfig, getStudyDayNumber, getTodayDateStr, StudyConfig } from "@/lib/study-config";
 import { CheckCircle2, Circle, Clock, Sparkles } from "lucide-react";
 
 interface StudyProgressProps {
   logs: SleepLog[];
+  config?: StudyConfig;
   onSelectDate?: (dateStr: string) => void;
 }
 
-export default function StudyProgress({ logs, onSelectDate }: StudyProgressProps) {
-  const config = getStudyConfig();
+export default function StudyProgress({ logs, config: propConfig, onSelectDate }: StudyProgressProps) {
+  const defaultStartDate = logs.length > 0 ? [...logs].map((l) => l.log_date).sort()[0] : undefined;
+  const config = propConfig || getStudyConfig(defaultStartDate);
   const allDays = getAllStudyDays(config);
   
   const completedLogDates = new Set(logs.map((l) => l.log_date));
@@ -21,7 +23,7 @@ export default function StudyProgress({ logs, onSelectDate }: StudyProgressProps
   const completionPercentage = Math.min(100, Math.round((completedCount / targetCount) * 100));
 
   // Determine current study day based on today's date
-  const todayStr = new Date().toISOString().split("T")[0];
+  const todayStr = getTodayDateStr();
   const currentDayNum = getStudyDayNumber(todayStr, config.startDate);
   const currentDayDisplay = currentDayNum > 0 && currentDayNum <= targetCount
     ? `Day ${currentDayNum} of ${targetCount}`

@@ -7,7 +7,7 @@ import {
   formatDurationHoursMinutes,
   formatTime12Hour,
 } from "@/lib/sleep-calculations";
-import { getStudyConfig, getStudyDayNumber, isDateWithinStudy } from "@/lib/study-config";
+import { getStudyConfig, getStudyDayNumber, getTodayDateStr, isDateWithinStudy, StudyConfig } from "@/lib/study-config";
 import { upsertSleepLog } from "@/lib/supabase/client";
 import {
   Calendar,
@@ -25,6 +25,7 @@ interface SleepFormProps {
   participantId: string;
   existingLogs: SleepLog[];
   initialDate?: string;
+  config?: StudyConfig;
   onSuccess?: (savedLog: SleepLog) => void;
   onCancel?: () => void;
 }
@@ -33,17 +34,19 @@ export default function SleepForm({
   participantId,
   existingLogs,
   initialDate,
+  config: propConfig,
   onSuccess,
   onCancel,
 }: SleepFormProps) {
-  const config = getStudyConfig();
+  const defaultStartDate = existingLogs.length > 0 ? [...existingLogs].map((l) => l.log_date).sort()[0] : undefined;
+  const config = propConfig || getStudyConfig(defaultStartDate);
 
-  // Pick default date: initialDate or today (or last study day if today is after study)
+  // Pick default date: initialDate or today (or startDate)
   const defaultDate = useMemo(() => {
     if (initialDate && isDateWithinStudy(initialDate, config)) {
       return initialDate;
     }
-    const today = new Date().toISOString().split("T")[0];
+    const today = getTodayDateStr();
     if (isDateWithinStudy(today, config)) {
       return today;
     }

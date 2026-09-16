@@ -259,7 +259,13 @@ export default function SleepEntriesTable({
                   full_name: log.participant?.full_name || "Unknown",
                   email: log.participant?.email || "Unknown",
                 };
-                const dayNum = getStudyDayNumber(log.log_date, config.startDate);
+                const pLogs = adminData.logs.filter((l) => l.participant_id === log.participant_id);
+                const pStart = pLogs.length > 0
+                  ? [...pLogs].map((l) => l.log_date).sort()[0]
+                  : ("created_at" in participant && participant.created_at
+                      ? (participant.created_at as string).split("T")[0]
+                      : config.startDate);
+                const dayNum = getStudyDayNumber(log.log_date, pStart);
                 const qualityInfo = log.sleep_quality ? SLEEP_QUALITY_LABELS[log.sleep_quality] : null;
 
                 return (

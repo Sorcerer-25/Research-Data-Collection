@@ -62,7 +62,13 @@ export async function exportStudyDataToExcel(data: AdminStudyData, filename?: st
       email: log.participant?.email || "Unknown",
     };
 
-    const studyDayNum = getStudyDayNumber(log.log_date, config.startDate);
+    const pLogs = data.logs.filter((l) => l.participant_id === log.participant_id);
+    const pStart = pLogs.length > 0
+      ? [...pLogs].map((l) => l.log_date).sort()[0]
+      : ("created_at" in participant && participant.created_at
+          ? (participant.created_at as string).split("T")[0]
+          : config.startDate);
+    const studyDayNum = getStudyDayNumber(log.log_date, pStart);
     const studyDayLabel = studyDayNum > 0 && studyDayNum <= config.targetDays
       ? `Day ${studyDayNum}`
       : `Day ${studyDayNum} (Out of range)`;

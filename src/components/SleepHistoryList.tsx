@@ -7,7 +7,7 @@ import {
   formatDurationHoursMinutes,
   formatTime12Hour,
 } from "@/lib/sleep-calculations";
-import { getStudyConfig, getStudyDayNumber } from "@/lib/study-config";
+import { getStudyConfig, getStudyDayNumber, StudyConfig } from "@/lib/study-config";
 import { deleteSleepLog } from "@/lib/supabase/client";
 import {
   Edit2,
@@ -18,16 +18,19 @@ import {
 
 interface SleepHistoryListProps {
   logs: SleepLog[];
+  config?: StudyConfig;
   onEditLog: (log: SleepLog) => void;
   onRefresh: () => void;
 }
 
 export default function SleepHistoryList({
   logs,
+  config: propConfig,
   onEditLog,
   onRefresh,
 }: SleepHistoryListProps) {
-  const config = getStudyConfig();
+  const defaultStartDate = logs.length > 0 ? [...logs].map((l) => l.log_date).sort()[0] : undefined;
+  const config = propConfig || getStudyConfig(defaultStartDate);
   const [deletingId, setDeletingId] = useState<string | null>(null);
 
   const handleDelete = async (logId: string) => {
