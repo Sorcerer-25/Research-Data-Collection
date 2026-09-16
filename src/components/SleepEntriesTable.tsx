@@ -297,9 +297,6 @@ export default function SleepEntriesTable({
                       <span className="font-bold text-indigo-600 dark:text-indigo-400">
                         {formatDurationHoursMinutes(log.total_sleep_minutes)}
                       </span>
-                      <span className="text-xs text-slate-400 ml-1">
-                        ({log.total_sleep_minutes}m)
-                      </span>
                     </td>
                   </tr>
                 );

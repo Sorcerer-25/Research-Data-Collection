@@ -113,7 +113,6 @@ export default function SleepHistoryList({
                     <span className="font-bold text-indigo-600 dark:text-indigo-400">
                       {formatDurationHoursMinutes(log.total_sleep_minutes)}
                     </span>
-                    <span className="text-xs text-slate-400 ml-1">({log.total_sleep_minutes}m)</span>
                   </td>
                   <td className="py-3.5 px-4 text-right">
                     <div className="flex items-center justify-end gap-1.5">

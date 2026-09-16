@@ -350,9 +350,6 @@ export default function ParticipantOverviewTable({
                             >
                               {p.average_sleep_formatted}
                             </span>
-                            <span className="text-[11px] text-slate-400 font-medium">
-                              ({p.average_sleep_minutes}m)
-                            </span>
                           </div>
                         ) : (
                           <span className="text-slate-400 italic text-xs">No entries</span>
@@ -434,9 +431,6 @@ export default function ParticipantOverviewTable({
                                           </td>
                                           <td className="py-2.5 px-3 font-bold text-indigo-600 dark:text-indigo-400">
                                             {formatDurationHoursMinutes(log.total_sleep_minutes)}
-                                            <span className="text-[10px] text-slate-400 font-normal ml-1">
-                                              ({log.total_sleep_minutes}m)
-                                            </span>
                                           </td>
                                           <td className="py-2.5 px-3 text-right text-slate-400 text-[11px] font-mono">
                                             {log.created_at ? new Date(log.created_at).toLocaleDateString() : "--"}

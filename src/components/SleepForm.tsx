@@ -316,9 +316,6 @@ export default function SleepForm({
             <span className="text-2xl sm:text-3xl font-black text-indigo-700 dark:text-indigo-300 tracking-tight">
               {formattedDuration}
             </span>
-            <span className="text-xs font-bold text-slate-500 dark:text-slate-400 ml-1.5">
-              ({calculatedMinutes} mins)
-            </span>
           </div>
         </div>
 
