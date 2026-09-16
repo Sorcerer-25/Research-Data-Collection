@@ -67,28 +67,29 @@ export default function ParticipantDashboard() {
   const isTodayLogged = logs.some((l) => l.log_date === todayStr);
   const firstName = user.full_name.split(" ")[0] || "Participant";
 
+  const scrollToForm = () => {
+    setTimeout(() => {
+      const formEl = document.getElementById("sleep-form-section");
+      if (formEl) {
+        formEl.scrollIntoView({ behavior: "smooth", block: "start" });
+      }
+    }, 60);
+  };
+
   const handleOpenFormForDate = (dateStr: string) => {
     setSelectedFormDate(dateStr);
     setShowLogForm(true);
-    // Smooth scroll to form
-    const formEl = document.getElementById("sleep-form-section");
-    if (formEl) {
-      formEl.scrollIntoView({ behavior: "smooth" });
-    }
+    scrollToForm();
   };
 
   const handleEditLog = (log: SleepLog) => {
     setSelectedFormDate(log.log_date);
     setShowLogForm(true);
-    const formEl = document.getElementById("sleep-form-section");
-    if (formEl) {
-      formEl.scrollIntoView({ behavior: "smooth" });
-    }
+    scrollToForm();
   };
 
   const handleFormSuccess = (savedLog: SleepLog) => {
     fetchLogs(user.id);
-    // Keep form visible briefly then collapse or stay updated
   };
 
   return (
@@ -115,8 +116,13 @@ export default function ParticipantDashboard() {
           <div className="flex flex-row sm:flex-col items-start sm:items-end gap-2">
             <button
               onClick={() => {
-                setSelectedFormDate(undefined);
-                setShowLogForm(!showLogForm);
+                if (!showLogForm) {
+                  setSelectedFormDate(undefined);
+                  setShowLogForm(true);
+                  scrollToForm();
+                } else {
+                  setShowLogForm(false);
+                }
               }}
               id="log-sleep-cta-btn"
               className="px-5 py-3 rounded-2xl bg-white hover:bg-slate-100 text-indigo-900 font-bold text-sm shadow-lg shadow-black/20 flex items-center gap-2 transition-all hover:scale-105 active:scale-95"
