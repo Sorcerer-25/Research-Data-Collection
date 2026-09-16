@@ -41,7 +41,7 @@ CREATE TABLE IF NOT EXISTS public.study_settings (
 
 -- Insert default active study settings if table is empty
 INSERT INTO public.study_settings (study_name, study_start_date, study_end_date, target_days, is_active)
-SELECT '14-Day Sleep Quality & Circadian Rhythm Study', '2026-09-01', '2026-09-14', 14, true
+SELECT '14-Day Sleep Quality & Circadian Rhythm Study', CURRENT_DATE, (CURRENT_DATE + INTERVAL '13 days')::DATE, 14, true
 WHERE NOT EXISTS (SELECT 1 FROM public.study_settings);
 
 -- ------------------------------------------------------------------------------
