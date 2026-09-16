@@ -72,20 +72,20 @@ export default function ParticipantOverviewTable({
 
         if (!matchesSearch) return false;
 
-        // Sleep Duration Filter (< 5h = < 300 min, > 7h = > 420 min, 5-7h = 300-420 min)
+        // Sleep Duration Filter (< 6h = < 360 min, > 7h = > 420 min, 6-7h = 360-420 min)
         if (durationFilter === "short") {
-          // Less than 5 hours (300 mins) and has logged at least 1 day
-          return p.completed_days > 0 && p.average_sleep_minutes < 300;
+          // Less than 6 hours (360 mins) and has logged at least 1 day
+          return p.completed_days > 0 && p.average_sleep_minutes < 360;
         }
         if (durationFilter === "long") {
           // Greater than 7 hours (420 mins) and has logged at least 1 day
           return p.completed_days > 0 && p.average_sleep_minutes > 420;
         }
         if (durationFilter === "mid") {
-          // 5 to 7 hours
+          // 6 to 7 hours
           return (
             p.completed_days > 0 &&
-            p.average_sleep_minutes >= 300 &&
+            p.average_sleep_minutes >= 360 &&
             p.average_sleep_minutes <= 420
           );
         }
@@ -176,9 +176,9 @@ export default function ParticipantOverviewTable({
                   ? "bg-rose-600 text-white shadow-sm"
                   : "text-rose-600 dark:text-rose-400 hover:bg-rose-50 dark:hover:bg-rose-950/40"
               }`}
-              title="Participants with Average Sleep < 5 Hours"
+              title="Participants with Average Sleep < 6 Hours"
             >
-              <span>&lt; 5 hrs</span>
+              <span>&lt; 6 hrs</span>
             </button>
             <button
               onClick={() => setDurationFilter("mid")}
@@ -187,9 +187,9 @@ export default function ParticipantOverviewTable({
                   ? "bg-indigo-600 text-white shadow-sm"
                   : "text-indigo-600 dark:text-indigo-400 hover:bg-indigo-50 dark:hover:bg-indigo-950/40"
               }`}
-              title="Participants with Average Sleep between 5 and 7 Hours"
+              title="Participants with Average Sleep between 6 and 7 Hours"
             >
-              <span>5–7 hrs</span>
+              <span>6–7 hrs</span>
             </button>
             <button
               onClick={() => setDurationFilter("long")}
@@ -341,7 +341,7 @@ export default function ParticipantOverviewTable({
                           <div className="flex items-center gap-1.5">
                             <span
                               className={`font-black ${
-                                p.average_sleep_minutes < 300
+                                p.average_sleep_minutes < 360
                                   ? "text-rose-600 dark:text-rose-400"
                                   : p.average_sleep_minutes > 420
                                   ? "text-emerald-600 dark:text-emerald-400"
