@@ -2,92 +2,432 @@
 @tailwind components;
 @tailwind utilities;
 
-/* Base Default Root Tokens */
+/* Base Default Root Tokens (Clinical Clean Light) */
 :root {
   --background: #f8fafc;
   --foreground: #0f172a;
   --font-inter: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
   --theme-primary: #4f46e5;
-  --theme-primary-hover: #4338ca;
+
+  /* Primary (Indigo) Shades */
+  --color-indigo-50: 238 242 255;
+  --color-indigo-100: 224 231 255;
+  --color-indigo-200: 199 210 254;
+  --color-indigo-300: 165 180 252;
+  --color-indigo-400: 129 140 248;
+  --color-indigo-500: 99 102 241;
+  --color-indigo-600: 79 70 229;
+  --color-indigo-700: 67 56 202;
+  --color-indigo-800: 55 48 163;
+  --color-indigo-900: 49 46 129;
+  --color-indigo-950: 30 27 75;
+
+  /* Neutrals (Slate) Shades */
+  --color-slate-50: 248 250 252;
+  --color-slate-100: 241 245 249;
+  --color-slate-200: 226 232 240;
+  --color-slate-300: 203 213 225;
+  --color-slate-400: 148 163 184;
+  --color-slate-500: 100 116 139;
+  --color-slate-600: 71 85 105;
+  --color-slate-700: 51 65 85;
+  --color-slate-800: 30 41 59;
+  --color-slate-850: 21 30 46;
+  --color-slate-900: 15 23 42;
+  --color-slate-950: 9 13 22;
 }
 
 /* ==========================================================================
-   LIGHT THEME PRESETS
+   LIGHT THEME PRESETS (6)
    ========================================================================== */
+
+/* 1. Clinical Clean (Default Medical Indigo & Clean Slate) */
 [data-theme="clinical-clean"] {
   --background: #f8fafc;
   --foreground: #0f172a;
   --theme-primary: #4f46e5;
+
+  --color-indigo-50: 238 242 255;
+  --color-indigo-100: 224 231 255;
+  --color-indigo-200: 199 210 254;
+  --color-indigo-300: 165 180 252;
+  --color-indigo-400: 129 140 248;
+  --color-indigo-500: 99 102 241;
+  --color-indigo-600: 79 70 229;
+  --color-indigo-700: 67 56 202;
+  --color-indigo-800: 55 48 163;
+  --color-indigo-900: 49 46 129;
+  --color-indigo-950: 30 27 75;
+
+  --color-slate-50: 248 250 252;
+  --color-slate-100: 241 245 249;
+  --color-slate-200: 226 232 240;
+  --color-slate-300: 203 213 225;
+  --color-slate-400: 148 163 184;
+  --color-slate-500: 100 116 139;
+  --color-slate-600: 71 85 105;
+  --color-slate-700: 51 65 85;
+  --color-slate-800: 30 41 59;
+  --color-slate-850: 21 30 46;
+  --color-slate-900: 15 23 42;
+  --color-slate-950: 9 13 22;
 }
 
+/* 2. Nordic Frost (Arctic Ice & Cyan Sky) */
 [data-theme="nordic-frost"] {
   --background: #f0f9ff;
   --foreground: #0c4a6e;
   --theme-primary: #0284c7;
+
+  --color-indigo-50: 240 249 255;
+  --color-indigo-100: 224 242 254;
+  --color-indigo-200: 186 230 253;
+  --color-indigo-300: 125 211 252;
+  --color-indigo-400: 56 189 248;
+  --color-indigo-500: 14 165 233;
+  --color-indigo-600: 2 132 199;
+  --color-indigo-700: 3 105 161;
+  --color-indigo-800: 7 89 133;
+  --color-indigo-900: 12 74 110;
+  --color-indigo-950: 8 47 73;
+
+  --color-slate-50: 240 249 255;
+  --color-slate-100: 224 242 254;
+  --color-slate-200: 186 230 253;
+  --color-slate-300: 147 197 253;
+  --color-slate-400: 96 165 250;
+  --color-slate-500: 59 130 246;
+  --color-slate-600: 37 99 235;
+  --color-slate-700: 29 78 216;
+  --color-slate-800: 30 58 138;
+  --color-slate-850: 15 37 90;
+  --color-slate-900: 12 40 96;
+  --color-slate-950: 6 24 64;
 }
 
+/* 3. Emerald Wellness (Botanical Mint & Sage) */
 [data-theme="emerald-mint"] {
   --background: #f0fdf4;
   --foreground: #064e3b;
   --theme-primary: #059669;
+
+  --color-indigo-50: 236 253 245;
+  --color-indigo-100: 209 250 229;
+  --color-indigo-200: 167 243 208;
+  --color-indigo-300: 110 231 183;
+  --color-indigo-400: 52 211 153;
+  --color-indigo-500: 16 185 129;
+  --color-indigo-600: 5 150 105;
+  --color-indigo-700: 4 120 87;
+  --color-indigo-800: 6 95 70;
+  --color-indigo-900: 6 78 59;
+  --color-indigo-950: 2 44 34;
+
+  --color-slate-50: 240 253 244;
+  --color-slate-100: 220 252 231;
+  --color-slate-200: 187 247 208;
+  --color-slate-300: 134 239 172;
+  --color-slate-400: 74 222 128;
+  --color-slate-500: 34 197 94;
+  --color-slate-600: 22 163 74;
+  --color-slate-700: 21 128 61;
+  --color-slate-800: 22 101 52;
+  --color-slate-850: 15 76 38;
+  --color-slate-900: 20 83 45;
+  --color-slate-950: 5 46 22;
 }
 
+/* 4. Warm Sunset (Golden Amber & Peach) */
 [data-theme="sunset-amber"] {
   --background: #fffbeb;
   --foreground: #78350f;
   --theme-primary: #d97706;
+
+  --color-indigo-50: 255 251 235;
+  --color-indigo-100: 254 243 199;
+  --color-indigo-200: 253 230 138;
+  --color-indigo-300: 252 211 77;
+  --color-indigo-400: 251 191 36;
+  --color-indigo-500: 245 158 11;
+  --color-indigo-600: 217 119 6;
+  --color-indigo-700: 180 83 9;
+  --color-indigo-800: 146 64 14;
+  --color-indigo-900: 120 53 15;
+  --color-indigo-950: 69 26 3;
+
+  --color-slate-50: 255 251 235;
+  --color-slate-100: 254 243 199;
+  --color-slate-200: 253 230 138;
+  --color-slate-300: 240 215 170;
+  --color-slate-400: 200 160 110;
+  --color-slate-500: 150 110 70;
+  --color-slate-600: 110 75 40;
+  --color-slate-700: 85 50 20;
+  --color-slate-800: 65 35 15;
+  --color-slate-850: 50 25 10;
+  --color-slate-900: 40 20 8;
+  --color-slate-950: 25 10 3;
 }
 
+/* 5. Rose Quartz (Soft Blush & Coral) */
 [data-theme="rose-quartz"] {
   --background: #fff1f2;
   --foreground: #881337;
   --theme-primary: #e11d48;
+
+  --color-indigo-50: 255 241 242;
+  --color-indigo-100: 255 228 230;
+  --color-indigo-200: 254 205 211;
+  --color-indigo-300: 253 164 175;
+  --color-indigo-400: 251 113 133;
+  --color-indigo-500: 244 63 94;
+  --color-indigo-600: 225 29 72;
+  --color-indigo-700: 190 18 60;
+  --color-indigo-800: 159 18 57;
+  --color-indigo-900: 136 19 55;
+  --color-indigo-950: 76 5 25;
+
+  --color-slate-50: 255 241 242;
+  --color-slate-100: 255 228 230;
+  --color-slate-200: 254 205 211;
+  --color-slate-300: 245 190 200;
+  --color-slate-400: 200 140 155;
+  --color-slate-500: 150 90 105;
+  --color-slate-600: 115 60 75;
+  --color-slate-700: 88 35 50;
+  --color-slate-800: 65 20 35;
+  --color-slate-850: 48 12 25;
+  --color-slate-900: 38 8 18;
+  --color-slate-950: 24 4 10;
 }
 
+/* 6. Lavender Dream (Serene Lilac & Amethyst) */
 [data-theme="lavender-dream"] {
   --background: #faf5ff;
   --foreground: #581c87;
   --theme-primary: #7c3aed;
+
+  --color-indigo-50: 250 245 255;
+  --color-indigo-100: 243 232 255;
+  --color-indigo-200: 221 214 254;
+  --color-indigo-300: 196 181 253;
+  --color-indigo-400: 167 139 250;
+  --color-indigo-500: 139 92 246;
+  --color-indigo-600: 124 58 237;
+  --color-indigo-700: 109 40 217;
+  --color-indigo-800: 91 33 182;
+  --color-indigo-900: 76 29 149;
+  --color-indigo-950: 46 16 101;
+
+  --color-slate-50: 250 245 255;
+  --color-slate-100: 243 232 255;
+  --color-slate-200: 221 214 254;
+  --color-slate-300: 195 180 230;
+  --color-slate-400: 150 130 190;
+  --color-slate-500: 110 90 150;
+  --color-slate-600: 85 65 120;
+  --color-slate-700: 65 45 95;
+  --color-slate-800: 48 28 75;
+  --color-slate-850: 36 18 60;
+  --color-slate-900: 28 12 48;
+  --color-slate-950: 18 6 32;
 }
 
 /* ==========================================================================
-   DARK THEME PRESETS
+   DARK THEME PRESETS (6)
    ========================================================================== */
+
+/* 1. Midnight Indigo (Default Dark - Deep Obsidian & Electric Indigo) */
 .dark,
 [data-theme="midnight-indigo"] {
   --background: #090d16;
   --foreground: #f1f5f9;
   --theme-primary: #6366f1;
+
+  --color-indigo-50: 238 242 255;
+  --color-indigo-100: 224 231 255;
+  --color-indigo-200: 199 210 254;
+  --color-indigo-300: 165 180 252;
+  --color-indigo-400: 129 140 248;
+  --color-indigo-500: 99 102 241;
+  --color-indigo-600: 79 70 229;
+  --color-indigo-700: 67 56 202;
+  --color-indigo-800: 55 48 163;
+  --color-indigo-900: 49 46 129;
+  --color-indigo-950: 30 27 75;
+
+  --color-slate-50: 248 250 252;
+  --color-slate-100: 241 245 249;
+  --color-slate-200: 226 232 240;
+  --color-slate-300: 203 213 225;
+  --color-slate-400: 148 163 184;
+  --color-slate-500: 100 116 139;
+  --color-slate-600: 71 85 105;
+  --color-slate-700: 51 65 85;
+  --color-slate-800: 30 41 59;
+  --color-slate-850: 21 30 46;
+  --color-slate-900: 15 23 42;
+  --color-slate-950: 9 13 22;
 }
 
+/* 2. Cyberpunk Neon (Carbon Black & Neon Cyan) */
 [data-theme="cyberpunk-neon"] {
   --background: #050811;
   --foreground: #e0f2fe;
   --theme-primary: #06b6d4;
+
+  --color-indigo-50: 236 254 255;
+  --color-indigo-100: 207 250 254;
+  --color-indigo-200: 165 243 252;
+  --color-indigo-300: 103 232 249;
+  --color-indigo-400: 34 211 238;
+  --color-indigo-500: 6 182 212;
+  --color-indigo-600: 8 145 178;
+  --color-indigo-700: 14 116 144;
+  --color-indigo-800: 21 94 117;
+  --color-indigo-900: 22 78 99;
+  --color-indigo-950: 8 51 68;
+
+  --color-slate-50: 240 249 255;
+  --color-slate-100: 224 242 254;
+  --color-slate-200: 186 230 253;
+  --color-slate-300: 125 211 252;
+  --color-slate-400: 56 189 248;
+  --color-slate-500: 14 116 144;
+  --color-slate-600: 15 80 105;
+  --color-slate-700: 18 55 75;
+  --color-slate-800: 15 35 50;
+  --color-slate-850: 10 24 38;
+  --color-slate-900: 8 17 28;
+  --color-slate-950: 5 8 17;
 }
 
+/* 3. Deep Forest (Nocturnal Pine & Dark Emerald Moss) */
 [data-theme="deep-forest"] {
   --background: #04100c;
   --foreground: #ecfdf5;
   --theme-primary: #10b981;
+
+  --color-indigo-50: 236 253 245;
+  --color-indigo-100: 209 250 229;
+  --color-indigo-200: 167 243 208;
+  --color-indigo-300: 110 231 183;
+  --color-indigo-400: 52 211 153;
+  --color-indigo-500: 16 185 129;
+  --color-indigo-600: 5 150 105;
+  --color-indigo-700: 4 120 87;
+  --color-indigo-800: 6 95 70;
+  --color-indigo-900: 6 78 59;
+  --color-indigo-950: 2 44 34;
+
+  --color-slate-50: 236 253 245;
+  --color-slate-100: 209 250 229;
+  --color-slate-200: 167 243 208;
+  --color-slate-300: 110 231 183;
+  --color-slate-400: 52 211 153;
+  --color-slate-500: 16 185 129;
+  --color-slate-600: 20 90 65;
+  --color-slate-700: 18 65 48;
+  --color-slate-800: 15 45 35;
+  --color-slate-850: 10 32 24;
+  --color-slate-900: 7 26 20;
+  --color-slate-950: 4 16 12;
 }
 
+/* 4. Abyssal Ocean (Deep Trench & Oceanic Azure) */
 [data-theme="abyssal-ocean"] {
   --background: #030f1d;
   --foreground: #f0f9ff;
   --theme-primary: #0ea5e9;
+
+  --color-indigo-50: 240 249 255;
+  --color-indigo-100: 224 242 254;
+  --color-indigo-200: 186 230 253;
+  --color-indigo-300: 125 211 252;
+  --color-indigo-400: 56 189 248;
+  --color-indigo-500: 14 165 233;
+  --color-indigo-600: 2 132 199;
+  --color-indigo-700: 3 105 161;
+  --color-indigo-800: 7 89 133;
+  --color-indigo-900: 12 74 110;
+  --color-indigo-950: 8 47 73;
+
+  --color-slate-50: 240 249 255;
+  --color-slate-100: 224 242 254;
+  --color-slate-200: 186 230 253;
+  --color-slate-300: 125 211 252;
+  --color-slate-400: 56 189 248;
+  --color-slate-500: 14 165 233;
+  --color-slate-600: 15 75 110;
+  --color-slate-700: 15 55 85;
+  --color-slate-800: 12 40 65;
+  --color-slate-850: 9 30 50;
+  --color-slate-900: 7 24 46;
+  --color-slate-950: 3 15 29;
 }
 
+/* 5. Vampire Velvet (Dark Velvet Charcoal & Bordeaux Ruby) */
 [data-theme="vampire-velvet"] {
   --background: #0f0508;
   --foreground: #ffe4e6;
   --theme-primary: #f43f5e;
+
+  --color-indigo-50: 255 241 242;
+  --color-indigo-100: 255 228 230;
+  --color-indigo-200: 254 205 211;
+  --color-indigo-300: 253 164 175;
+  --color-indigo-400: 251 113 133;
+  --color-indigo-500: 244 63 94;
+  --color-indigo-600: 225 29 72;
+  --color-indigo-700: 190 18 60;
+  --color-indigo-800: 159 18 57;
+  --color-indigo-900: 136 19 55;
+  --color-indigo-950: 76 5 25;
+
+  --color-slate-50: 255 241 242;
+  --color-slate-100: 255 228 230;
+  --color-slate-200: 254 205 211;
+  --color-slate-300: 240 160 175;
+  --color-slate-400: 180 90 110;
+  --color-slate-500: 130 50 70;
+  --color-slate-600: 90 30 45;
+  --color-slate-700: 65 20 32;
+  --color-slate-800: 45 12 22;
+  --color-slate-850: 34 8 16;
+  --color-slate-900: 24 6 12;
+  --color-slate-950: 15 5 8;
 }
 
+/* 6. Monochrome Slate (Minimalist Titanium Graphite) */
 [data-theme="monochrome-slate"] {
   --background: #090a0c;
   --foreground: #f8fafc;
   --theme-primary: #94a3b8;
+
+  --color-indigo-50: 248 250 252;
+  --color-indigo-100: 241 245 249;
+  --color-indigo-200: 226 232 240;
+  --color-indigo-300: 203 213 225;
+  --color-indigo-400: 148 163 184;
+  --color-indigo-500: 100 116 139;
+  --color-indigo-600: 71 85 105;
+  --color-indigo-700: 51 65 85;
+  --color-indigo-800: 30 41 59;
+  --color-indigo-900: 15 23 42;
+  --color-indigo-950: 9 13 22;
+
+  --color-slate-50: 248 250 252;
+  --color-slate-100: 241 245 249;
+  --color-slate-200: 226 232 240;
+  --color-slate-300: 203 213 225;
+  --color-slate-400: 148 163 184;
+  --color-slate-500: 100 116 139;
+  --color-slate-600: 71 85 105;
+  --color-slate-700: 45 48 56;
+  --color-slate-800: 30 33 40;
+  --color-slate-850: 22 24 30;
+  --color-slate-900: 15 17 22;
+  --color-slate-950: 9 10 12;
 }
 
 body {
@@ -97,7 +437,7 @@ body {
   min-height: 100vh;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
-  transition: background-color 0.25s ease, color 0.2s ease;
+  transition: background-color 0.25s ease, color 0.2s ease, border-color 0.2s ease;
 }
 
 /* Custom UI styling */
