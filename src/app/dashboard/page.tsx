@@ -117,25 +117,25 @@ export default function ParticipantDashboard() {
   return (
     <div className="max-w-4xl mx-auto space-y-6 pb-12">
       {/* 1. Participant Greeting & Header Card */}
-      <div className="bg-gradient-to-r from-indigo-900 via-indigo-850 to-slate-900 rounded-3xl p-6 sm:p-8 text-white shadow-xl relative overflow-hidden">
+      <div className="bg-gradient-to-r from-indigo-900 via-indigo-850 to-slate-900 rounded-2xl sm:rounded-3xl p-4 sm:p-7 text-white shadow-xl relative overflow-hidden">
         {/* Subtle decorative background glow */}
         <div className="absolute top-0 right-0 w-64 h-64 bg-indigo-500/10 rounded-full blur-3xl pointer-events-none" />
         
         <div className="relative z-10 flex flex-col sm:flex-row sm:items-center justify-between gap-4">
-          <div className="space-y-1.5">
-            <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-white/10 backdrop-blur-md text-xs font-medium text-indigo-200 border border-white/10">
-              <Moon className="w-3.5 h-3.5 fill-indigo-300 text-indigo-200" />
+          <div className="space-y-1 sm:space-y-1.5">
+            <div className="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full bg-white/10 backdrop-blur-md text-[11px] sm:text-xs font-medium text-indigo-200 border border-white/10">
+              <Moon className="w-3 h-3 fill-indigo-300 text-indigo-200" />
               {config.studyName}
             </div>
-            <h1 className="text-2xl sm:text-4xl font-black tracking-tight text-white">
+            <h1 className="text-xl sm:text-3xl font-black tracking-tight text-white">
               Hello, {firstName} 👋
             </h1>
             <p className="text-xs sm:text-sm text-indigo-200/80 max-w-lg">
-              Welcome back to your daily sleep diary. Please record your sleep details every morning upon waking.
+              Welcome back. Please record your sleep details every morning upon waking.
             </p>
           </div>
 
-          <div className="flex flex-row sm:flex-col items-start sm:items-end gap-2">
+          <div className="flex flex-col sm:items-end gap-1.5 shrink-0 w-full sm:w-auto">
             <button
               onClick={() => {
                 if (!showLogForm) {
@@ -147,13 +147,13 @@ export default function ParticipantDashboard() {
                 }
               }}
               id="log-sleep-cta-btn"
-              className="px-5 py-3 rounded-2xl bg-white hover:bg-slate-100 text-indigo-900 font-bold text-sm shadow-lg shadow-black/20 flex items-center gap-2 transition-all hover:scale-105 active:scale-95"
+              className="w-full sm:w-auto px-4 py-2.5 sm:px-5 sm:py-2.5 rounded-xl sm:rounded-2xl bg-white hover:bg-slate-100 text-indigo-950 font-bold text-xs sm:text-sm shadow-md flex items-center justify-center gap-2 transition-all hover:scale-[1.02] active:scale-95"
             >
-              <PlusCircle className="w-4 h-4 text-indigo-600" />
+              <PlusCircle className="w-4 h-4 text-indigo-600 shrink-0" />
               <span>{isTodayLogged ? "Edit Today's Sleep" : "Log Today's Sleep"}</span>
             </button>
             {isTodayLogged && (
-              <span className="text-[11px] text-emerald-300 font-medium flex items-center gap-1">
+              <span className="text-[11px] text-emerald-300 font-medium flex items-center justify-center sm:justify-end gap-1">
                 <CheckCircle2 className="w-3.5 h-3.5" /> Today's sleep is recorded
               </span>
             )}
