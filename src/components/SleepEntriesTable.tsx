@@ -242,14 +242,12 @@ export default function SleepEntriesTable({
               <th className="py-3 px-4">Bed Time</th>
               <th className="py-3 px-4">Wake Time</th>
               <th className="py-3 px-4">Duration</th>
-              <th className="py-3 px-4">Sleep Quality</th>
-              <th className="py-3 px-4">Notes</th>
             </tr>
           </thead>
           <tbody className="divide-y divide-slate-200/70 dark:divide-slate-800 text-slate-800 dark:text-slate-200">
             {paginatedLogs.length === 0 ? (
               <tr>
-                <td colSpan={8} className="py-8 text-center text-slate-500 dark:text-slate-400">
+                <td colSpan={6} className="py-8 text-center text-slate-500 dark:text-slate-400">
                   No sleep log records found.
                 </td>
               </tr>
@@ -266,7 +264,6 @@ export default function SleepEntriesTable({
                       ? (participant.created_at as string).split("T")[0]
                       : config.startDate);
                 const dayNum = getStudyDayNumber(log.log_date, pStart);
-                const qualityInfo = log.sleep_quality ? SLEEP_QUALITY_LABELS[log.sleep_quality] : null;
 
                 return (
                   <tr key={log.id} className="hover:bg-slate-50/80 dark:hover:bg-slate-800/40 transition-colors">
@@ -305,20 +302,6 @@ export default function SleepEntriesTable({
                       <span className="text-xs text-slate-400 ml-1">
                         ({log.total_sleep_minutes}m)
                       </span>
-                    </td>
-                    <td className="py-3 px-4">
-                      {qualityInfo ? (
-                        <span
-                          className={`inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-xs font-semibold border ${qualityInfo.bg} ${qualityInfo.color}`}
-                        >
-                          ★ {log.sleep_quality} - {qualityInfo.label}
-                        </span>
-                      ) : (
-                        <span className="text-slate-400 text-xs">--</span>
-                      )}
-                    </td>
-                    <td className="py-3 px-4 text-xs text-slate-600 dark:text-slate-400 max-w-xs truncate" title={log.notes || ""}>
-                      {log.notes || "--"}
                     </td>
                   </tr>
                 );

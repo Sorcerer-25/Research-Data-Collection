@@ -56,8 +56,6 @@ CREATE TABLE IF NOT EXISTS public.sleep_logs (
     bed_time TEXT NOT NULL,       -- Stored as HH:mm string (e.g. '23:30')
     wake_time TEXT NOT NULL,      -- Stored as HH:mm string (e.g. '07:15')
     total_sleep_minutes INTEGER NOT NULL CHECK (total_sleep_minutes >= 0 AND total_sleep_minutes <= 1440),
-    sleep_quality INTEGER CHECK (sleep_quality >= 1 AND sleep_quality <= 5),
-    notes TEXT,
     created_at TIMESTAMPTZ NOT NULL DEFAULT timezone('utc'::text, now()),
     updated_at TIMESTAMPTZ NOT NULL DEFAULT timezone('utc'::text, now()),
     CONSTRAINT unique_participant_log_date UNIQUE (participant_id, log_date)

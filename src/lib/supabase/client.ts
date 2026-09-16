@@ -238,8 +238,6 @@ export async function upsertSleepLog(
         bed_time: log.bed_time,
         wake_time: log.wake_time,
         total_sleep_minutes: log.total_sleep_minutes,
-        sleep_quality: log.sleep_quality || null,
-        notes: log.notes || null,
       };
 
       const { data, error } = await client
