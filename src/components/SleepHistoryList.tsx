@@ -6,20 +6,14 @@ import {
   formatDateDisplay,
   formatDurationHoursMinutes,
   formatTime12Hour,
-  SLEEP_QUALITY_LABELS,
 } from "@/lib/sleep-calculations";
 import { getStudyConfig, getStudyDayNumber } from "@/lib/study-config";
 import { deleteSleepLog } from "@/lib/supabase/client";
 import {
-  Calendar,
-  Clock,
   Edit2,
   Trash2,
   Moon,
   Sun,
-  FileText,
-  AlertCircle,
-  CheckCircle2,
 } from "lucide-react";
 
 interface SleepHistoryListProps {
@@ -80,15 +74,12 @@ export default function SleepHistoryList({
               <th className="py-3.5 px-4">Bed Time</th>
               <th className="py-3.5 px-4">Wake Time</th>
               <th className="py-3.5 px-4">Sleep Duration</th>
-              <th className="py-3.5 px-4">Quality</th>
-              <th className="py-3.5 px-4">Notes</th>
               <th className="py-3.5 px-4 text-right">Actions</th>
             </tr>
           </thead>
           <tbody className="divide-y divide-slate-200/70 dark:divide-slate-800 text-slate-800 dark:text-slate-200">
             {logs.map((log) => {
               const dayNum = getStudyDayNumber(log.log_date, config.startDate);
-              const qualityInfo = log.sleep_quality ? SLEEP_QUALITY_LABELS[log.sleep_quality] : null;
 
               return (
                 <tr
@@ -121,20 +112,6 @@ export default function SleepHistoryList({
                     </span>
                     <span className="text-xs text-slate-400 ml-1">({log.total_sleep_minutes}m)</span>
                   </td>
-                  <td className="py-3.5 px-4">
-                    {qualityInfo ? (
-                      <span
-                        className={`inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full text-xs font-semibold border ${qualityInfo.bg} ${qualityInfo.color}`}
-                      >
-                        ★ {log.sleep_quality} - {qualityInfo.label}
-                      </span>
-                    ) : (
-                      <span className="text-xs text-slate-400">--</span>
-                    )}
-                  </td>
-                  <td className="py-3.5 px-4 max-w-xs truncate text-xs text-slate-600 dark:text-slate-400">
-                    {log.notes || "--"}
-                  </td>
                   <td className="py-3.5 px-4 text-right">
                     <div className="flex items-center justify-end gap-1.5">
                       <button
@@ -165,7 +142,6 @@ export default function SleepHistoryList({
       <div className="md:hidden divide-y divide-slate-200/80 dark:divide-slate-800">
         {logs.map((log) => {
           const dayNum = getStudyDayNumber(log.log_date, config.startDate);
-          const qualityInfo = log.sleep_quality ? SLEEP_QUALITY_LABELS[log.sleep_quality] : null;
 
           return (
             <div key={log.id} className="p-4 space-y-2.5">
@@ -216,25 +192,6 @@ export default function SleepHistoryList({
                     {formatDurationHoursMinutes(log.total_sleep_minutes)}
                   </span>
                 </div>
-              </div>
-
-              {/* Quality & Notes */}
-              <div className="flex items-center justify-between gap-2 text-xs">
-                {qualityInfo ? (
-                  <span
-                    className={`inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full text-[11px] font-semibold border ${qualityInfo.bg} ${qualityInfo.color}`}
-                  >
-                    ★ {log.sleep_quality} - {qualityInfo.label}
-                  </span>
-                ) : (
-                  <span className="text-slate-400">No rating</span>
-                )}
-
-                {log.notes && (
-                  <span className="text-xs text-slate-500 truncate max-w-[180px]" title={log.notes}>
-                    "{log.notes}"
-                  </span>
-                )}
               </div>
             </div>
           );

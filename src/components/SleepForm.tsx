@@ -6,7 +6,6 @@ import {
   calculateSleepDurationMinutes,
   formatDurationHoursMinutes,
   formatTime12Hour,
-  SLEEP_QUALITY_LABELS,
 } from "@/lib/sleep-calculations";
 import { getStudyConfig, getStudyDayNumber, isDateWithinStudy } from "@/lib/study-config";
 import { upsertSleepLog } from "@/lib/supabase/client";
@@ -15,10 +14,8 @@ import {
   Clock,
   CheckCircle,
   AlertCircle,
-  Sparkles,
   Info,
   Loader2,
-  FileText,
   Moon,
   Sun,
   Edit3,
@@ -56,8 +53,6 @@ export default function SleepForm({
   const [logDate, setLogDate] = useState<string>(defaultDate);
   const [bedTime, setBedTime] = useState<string>("23:30");
   const [wakeTime, setWakeTime] = useState<string>("07:15");
-  const [sleepQuality, setSleepQuality] = useState<number | null>(4);
-  const [notes, setNotes] = useState<string>("");
 
   const [isSubmitting, setIsSubmitting] = useState<boolean>(false);
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
@@ -71,16 +66,12 @@ export default function SleepForm({
       setExistingLogId(existing.id);
       setBedTime(existing.bed_time || "23:30");
       setWakeTime(existing.wake_time || "07:15");
-      setSleepQuality(existing.sleep_quality ?? null);
-      setNotes(existing.notes || "");
     } else {
       setExistingLogId(null);
       // Reset to sensible defaults if changing to a new date
       if (!existingLogs.some((l) => l.id === existingLogId)) {
         setBedTime("23:30");
         setWakeTime("07:15");
-        setSleepQuality(4);
-        setNotes("");
       }
     }
     setErrorMessage(null);
@@ -138,8 +129,8 @@ export default function SleepForm({
         bed_time: bedTime,
         wake_time: wakeTime,
         total_sleep_minutes: calculatedMinutes,
-        sleep_quality: sleepQuality,
-        notes: notes.trim() || null,
+        sleep_quality: null,
+        notes: null,
       });
 
       if (error || !data) {
@@ -179,7 +170,7 @@ export default function SleepForm({
             <p className="text-xs text-slate-500 dark:text-slate-400">
               {existingLogId
                 ? "Existing record found for this date. Updates will replace current values."
-                : "Record your bed time, wake time, and sleep quality."}
+                : "Record your bed time and wake time."}
             </p>
           </div>
         </div>
@@ -302,56 +293,6 @@ export default function SleepForm({
               ({calculatedMinutes} mins)
             </span>
           </div>
-        </div>
-
-        {/* 4. Sleep Quality (1–5 selection) */}
-        <div>
-          <label className="block text-xs font-bold uppercase tracking-wider text-slate-600 dark:text-slate-300 mb-2">
-            Sleep Quality Rating (Optional)
-          </label>
-          <div className="grid grid-cols-5 gap-2">
-            {[1, 2, 3, 4, 5].map((level) => {
-              const info = SLEEP_QUALITY_LABELS[level];
-              const isSelected = sleepQuality === level;
-              return (
-                <button
-                  type="button"
-                  key={level}
-                  id={`quality-rating-${level}`}
-                  onClick={() => setSleepQuality(isSelected ? null : level)}
-                  className={`flex flex-col items-center justify-center py-3 px-1 rounded-xl border text-center transition-all ${
-                    isSelected
-                      ? "bg-indigo-600 text-white border-indigo-600 ring-2 ring-indigo-500/30 shadow-md scale-[1.02]"
-                      : "bg-white dark:bg-slate-800 text-slate-700 dark:text-slate-300 border-slate-200 dark:border-slate-700 hover:border-indigo-300 hover:bg-slate-50 dark:hover:bg-slate-750"
-                  }`}
-                >
-                  <span className="text-lg font-black">{level}</span>
-                  <span className={`text-[10px] font-semibold mt-0.5 leading-tight ${isSelected ? "text-indigo-100" : "text-slate-500 dark:text-slate-400"}`}>
-                    {info.label}
-                  </span>
-                </button>
-              );
-            })}
-          </div>
-          <p className="text-[11px] text-slate-500 dark:text-slate-400 mt-1.5">
-            1 = Very Poor, 2 = Poor, 3 = Fair, 4 = Good, 5 = Excellent
-          </p>
-        </div>
-
-        {/* 5. Notes */}
-        <div>
-          <label className="block text-xs font-bold uppercase tracking-wider text-slate-600 dark:text-slate-300 mb-1.5 flex items-center gap-1.5">
-            <FileText className="w-3.5 h-3.5 text-slate-400" />
-            Notes & Comments (Optional)
-          </label>
-          <textarea
-            id="notes-input"
-            rows={2}
-            value={notes}
-            onChange={(e) => setNotes(e.target.value)}
-            placeholder="e.g., Had difficulty falling asleep, woken up by room noise, felt well rested..."
-            className="w-full px-3.5 py-2.5 rounded-xl border border-slate-300 dark:border-slate-700 bg-white dark:bg-slate-800 text-slate-900 dark:text-white text-sm focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 shadow-sm placeholder:text-slate-400"
-          />
         </div>
 
         {/* Action Buttons */}
