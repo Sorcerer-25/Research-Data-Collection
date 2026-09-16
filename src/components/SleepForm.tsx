@@ -7,7 +7,13 @@ import {
   formatDurationHoursMinutes,
   formatTime12Hour,
 } from "@/lib/sleep-calculations";
-import { getStudyConfig, getStudyDayNumber, getTodayDateStr, isDateWithinStudy, StudyConfig } from "@/lib/study-config";
+import {
+  getStudyConfig,
+  getStudyDayNumber,
+  getTodayDateStr,
+  isDateAllowedForLogging,
+  StudyConfig,
+} from "@/lib/study-config";
 import { upsertSleepLog } from "@/lib/supabase/client";
 import {
   Calendar,
@@ -38,20 +44,27 @@ export default function SleepForm({
   onSuccess,
   onCancel,
 }: SleepFormProps) {
-  const defaultStartDate = existingLogs.length > 0 ? [...existingLogs].map((l) => l.log_date).sort()[0] : undefined;
+  const hasLogs = existingLogs.length > 0;
+  const todayStr = getTodayDateStr();
+  const defaultStartDate = hasLogs ? [...existingLogs].map((l) => l.log_date).sort()[0] : todayStr;
   const config = propConfig || getStudyConfig(defaultStartDate);
 
-  // Pick default date: initialDate or today (or startDate)
+  // Strict min and max dates:
+  // - If user has no logs yet, Day 1 MUST be today (locked to today)
+  // - If user has logs, they can select from Day 1 up to today (or end of study, whichever is earlier)
+  const minDate = hasLogs ? config.startDate : todayStr;
+  const maxDate = todayStr < config.endDate ? todayStr : config.endDate;
+
+  // Pick default date: initialDate (if allowed) or today
   const defaultDate = useMemo(() => {
-    if (initialDate && isDateWithinStudy(initialDate, config)) {
-      return initialDate;
+    if (initialDate) {
+      const check = isDateAllowedForLogging(initialDate, config, hasLogs);
+      if (check.allowed) {
+        return initialDate;
+      }
     }
-    const today = getTodayDateStr();
-    if (isDateWithinStudy(today, config)) {
-      return today;
-    }
-    return config.startDate;
-  }, [initialDate, config]);
+    return todayStr;
+  }, [initialDate, config, hasLogs, todayStr]);
 
   const [logDate, setLogDate] = useState<string>(defaultDate);
   const [bedTime, setBedTime] = useState<string>("23:30");
@@ -61,6 +74,16 @@ export default function SleepForm({
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
   const [successMessage, setSuccessMessage] = useState<string | null>(null);
   const [existingLogId, setExistingLogId] = useState<string | null>(null);
+
+  // Sync logDate when initialDate changes
+  useEffect(() => {
+    if (initialDate) {
+      const check = isDateAllowedForLogging(initialDate, config, hasLogs);
+      if (check.allowed) {
+        setLogDate(initialDate);
+      }
+    }
+  }, [initialDate, config, hasLogs]);
 
   // Check if an existing log exists for the currently selected date
   useEffect(() => {
@@ -104,10 +127,10 @@ export default function SleepForm({
       setErrorMessage("Please select a date for this sleep entry.");
       return;
     }
-    if (!isDateWithinStudy(logDate, config)) {
-      setErrorMessage(
-        `The selected date must be within the study period (${config.startDate} to ${config.endDate}).`
-      );
+
+    const dateCheck = isDateAllowedForLogging(logDate, config, hasLogs);
+    if (!dateCheck.allowed) {
+      setErrorMessage(dateCheck.reason || "Invalid study date.");
       return;
     }
 
@@ -219,15 +242,18 @@ export default function SleepForm({
               type="date"
               id="log-date-input"
               value={logDate}
-              min={config.startDate}
-              max={config.endDate}
+              min={minDate}
+              max={maxDate}
+              disabled={!hasLogs}
               onChange={(e) => setLogDate(e.target.value)}
               required
-              className="w-full pl-10 pr-4 py-2.5 rounded-xl border border-slate-300 dark:border-slate-700 bg-white dark:bg-slate-800 text-slate-900 dark:text-white text-sm font-medium focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 shadow-sm transition-all"
+              className="w-full pl-10 pr-4 py-2.5 rounded-xl border border-slate-300 dark:border-slate-700 bg-white dark:bg-slate-800 text-slate-900 dark:text-white text-sm font-medium focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 shadow-sm transition-all disabled:bg-slate-100 dark:disabled:bg-slate-800/60 disabled:cursor-not-allowed"
             />
           </div>
           <p className="text-[11px] text-slate-500 dark:text-slate-400 mt-1">
-            Allowed study period: {config.startDate} through {config.endDate} ({config.targetDays} days).
+            {!hasLogs
+              ? "Day 1 begins today. Once recorded, your 14-day study schedule is established."
+              : `Study period: Day 1 (${config.startDate}) to Day ${config.targetDays} (${config.endDate}). Future dates cannot be logged.`}
           </p>
         </div>
 

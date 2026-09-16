@@ -88,20 +88,35 @@ export default function StudyProgress({ logs, config: propConfig, onSelectDate }
           {allDays.map((day) => {
             const isCompleted = completedLogDates.has(day.dateStr);
             const isToday = day.isToday;
+            const isFuture = day.isFuture;
+            const canClick = !isFuture && !!onSelectDate;
+
+            let titleText = `Day ${day.dayNumber} (${day.dateStr})`;
+            if (isCompleted) {
+              titleText += ": Completed (click to view/edit)";
+            } else if (isToday) {
+              titleText += ": Today (click to log sleep)";
+            } else if (isFuture) {
+              titleText += ": Upcoming (future date)";
+            } else {
+              titleText += ": Pending (click to log past entry)";
+            }
 
             return (
               <div
                 key={day.dayNumber}
-                onClick={() => onSelectDate && onSelectDate(day.dateStr)}
-                role={onSelectDate ? "button" : undefined}
-                className={`flex flex-col items-center justify-center p-2 rounded-xl text-center border transition-all ${
+                onClick={() => canClick && onSelectDate(day.dateStr)}
+                role={canClick ? "button" : undefined}
+                className={`flex flex-col items-center justify-center p-2 rounded-xl text-center border transition-all select-none ${
                   isCompleted
                     ? "bg-emerald-50 dark:bg-emerald-950/40 border-emerald-300 dark:border-emerald-800/80 text-emerald-900 dark:text-emerald-200 shadow-sm"
                     : isToday
                     ? "bg-indigo-50 dark:bg-indigo-950/50 border-indigo-400 dark:border-indigo-700 text-indigo-900 dark:text-indigo-200 ring-2 ring-indigo-500/20"
+                    : isFuture
+                    ? "bg-slate-50/50 dark:bg-slate-900/30 border-slate-200/50 dark:border-slate-800/50 text-slate-400 dark:text-slate-600 opacity-60 cursor-not-allowed"
                     : "bg-slate-50 dark:bg-slate-800/50 border-slate-200 dark:border-slate-800 text-slate-600 dark:text-slate-400 hover:bg-slate-100 dark:hover:bg-slate-800"
-                } ${onSelectDate ? "cursor-pointer hover:scale-105 active:scale-95" : ""}`}
-                title={`Day ${day.dayNumber} (${day.dateStr}): ${isCompleted ? "Completed" : "Not logged"}`}
+                } ${canClick ? "cursor-pointer hover:scale-105 active:scale-95" : ""}`}
+                title={titleText}
               >
                 <div className="flex items-center justify-center mb-1">
                   {isCompleted ? (

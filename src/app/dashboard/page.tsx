@@ -103,6 +103,15 @@ export default function ParticipantDashboard() {
 
   const handleFormSuccess = (savedLog: SleepLog) => {
     fetchLogs(user.id);
+    setShowLogForm(false);
+    setSelectedFormDate(undefined);
+    // Smoothly scroll to the progress calendar to view updated completion status
+    setTimeout(() => {
+      const progressEl = document.getElementById("study-progress-section");
+      if (progressEl) {
+        progressEl.scrollIntoView({ behavior: "smooth", block: "start" });
+      }
+    }, 80);
   };
 
   return (
@@ -153,7 +162,9 @@ export default function ParticipantDashboard() {
       </div>
 
       {/* 2. Study Progress Component */}
-      <StudyProgress config={config} logs={logs} onSelectDate={handleOpenFormForDate} />
+      <div id="study-progress-section" className="scroll-mt-20">
+        <StudyProgress config={config} logs={logs} onSelectDate={handleOpenFormForDate} />
+      </div>
 
       {/* 3. Sleep Entry Form (Toggleable / Clickable) */}
       {showLogForm && (

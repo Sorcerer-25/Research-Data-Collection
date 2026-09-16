@@ -80,6 +80,54 @@ export function isDateWithinStudy(dateStr: string, config?: StudyConfig): boolea
   return dateStr >= currentConfig.startDate && dateStr <= currentConfig.endDate;
 }
 
+/**
+ * Checks whether a given date is valid for logging:
+ * - Cannot be in the future (must be <= today)
+ * - If user has no logs yet, date must be today (to establish Day 1)
+ * - Must be within the 14-day study window [startDate, endDate]
+ */
+export function isDateAllowedForLogging(
+  dateStr: string,
+  config?: StudyConfig,
+  hasLogs: boolean = true
+): { allowed: boolean; reason?: string } {
+  const currentConfig = config || getStudyConfig();
+  const todayStr = getTodayDateStr();
+
+  if (dateStr > todayStr) {
+    return {
+      allowed: false,
+      reason: "You cannot record sleep for a future date. Please select today or a past study day.",
+    };
+  }
+
+  if (!hasLogs) {
+    if (dateStr !== todayStr) {
+      return {
+        allowed: false,
+        reason: "Your first sleep entry must be recorded for today's date to establish Day 1 of your study.",
+      };
+    }
+    return { allowed: true };
+  }
+
+  if (dateStr < currentConfig.startDate) {
+    return {
+      allowed: false,
+      reason: `Date cannot be earlier than Day 1 of your study (${currentConfig.startDate}).`,
+    };
+  }
+
+  if (dateStr > currentConfig.endDate) {
+    return {
+      allowed: false,
+      reason: `Date is beyond the ${currentConfig.targetDays}-day study period (${currentConfig.startDate} to ${currentConfig.endDate}).`,
+    };
+  }
+
+  return { allowed: true };
+}
+
 export interface StudyDayInfo {
   dayNumber: number;
   dateStr: string;
