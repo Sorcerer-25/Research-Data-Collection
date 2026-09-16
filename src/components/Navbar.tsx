@@ -4,10 +4,13 @@ import React, { useState } from "react";
 import Link from "next/link";
 import { usePathname, useRouter } from "next/navigation";
 import { useAuth } from "@/lib/auth-context";
+import { useTheme } from "@/lib/theme-context";
 import { Moon, ShieldCheck, LogOut, Menu, X, PlusCircle, LayoutDashboard } from "lucide-react";
+import ThemeToggleBtn from "@/components/ThemeToggleBtn";
 
 export default function Navbar() {
   const { user, role, logout } = useAuth();
+  const { openThemeModal, activeTheme } = useTheme();
   const pathname = usePathname();
   const router = useRouter();
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
@@ -36,7 +39,7 @@ export default function Navbar() {
           </div>
 
           {/* Desktop Navigation */}
-          <div className="hidden md:flex items-center gap-6">
+          <div className="hidden md:flex items-center gap-5">
             {user ? (
               <>
                 <nav className="flex items-center gap-1">
@@ -89,7 +92,12 @@ export default function Navbar() {
                   )}
                 </nav>
 
-                <div className="h-5 w-px bg-slate-200 dark:border-slate-800" />
+                <div className="h-5 w-px bg-slate-200 dark:bg-slate-800" />
+
+                {/* Theme Toggle & Customizer */}
+                <ThemeToggleBtn showPalette={true} />
+
+                <div className="h-5 w-px bg-slate-200 dark:bg-slate-800" />
 
                 {/* User Profile Pill */}
                 <div className="flex items-center gap-3">
@@ -117,6 +125,8 @@ export default function Navbar() {
               </>
             ) : (
               <div className="flex items-center gap-3">
+                <ThemeToggleBtn showPalette={true} />
+                <div className="h-5 w-px bg-slate-200 dark:bg-slate-800" />
                 <Link
                   href="/login"
                   className="px-4 py-2 text-sm font-medium text-slate-700 dark:text-slate-200 hover:text-indigo-600 dark:hover:text-indigo-400 transition-colors"
@@ -133,8 +143,9 @@ export default function Navbar() {
             )}
           </div>
 
-          {/* Mobile menu button */}
-          <div className="md:hidden flex items-center gap-2">
+          {/* Mobile menu button & Theme toggle */}
+          <div className="md:hidden flex items-center gap-1.5">
+            <ThemeToggleBtn showPalette={true} />
             {user && (
               <button
                 onClick={handleLogout}
@@ -196,6 +207,20 @@ export default function Navbar() {
                     </Link>
                   </>
                 )}
+                <button
+                  type="button"
+                  onClick={() => {
+                    setMobileMenuOpen(false);
+                    openThemeModal();
+                  }}
+                  className="w-full text-left px-3 py-2 text-sm text-indigo-600 dark:text-indigo-400 font-medium hover:bg-indigo-50 dark:hover:bg-indigo-950/40 rounded-md flex items-center justify-between"
+                >
+                  <span>Theme & Color Appearance</span>
+                  <span className="text-[10px] font-bold uppercase tracking-wider px-2 py-0.5 rounded-full bg-indigo-100 dark:bg-indigo-950 text-indigo-700 dark:text-indigo-300">
+                    {activeTheme.name}
+                  </span>
+                </button>
+
                 <button
                   onClick={() => {
                     setMobileMenuOpen(false);
