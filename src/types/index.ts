@@ -37,6 +37,7 @@ export interface ParticipantSummary {
   id: string;
   full_name: string;
   email: string;
+  role?: UserRole;
   expected_days: number;
   completed_days: number;
   completion_percentage: number;
@@ -45,10 +46,12 @@ export interface ParticipantSummary {
   min_sleep_minutes: number;
   max_sleep_minutes: number;
   last_log_date: string | null;
+  logs?: SleepLog[];
 }
 
 export interface StudyStats {
   total_participants: number;
+  active_participants_count: number;
   total_entries: number;
   expected_entries: number;
   overall_completion_percentage: number;

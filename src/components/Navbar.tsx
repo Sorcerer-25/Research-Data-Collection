@@ -54,7 +54,7 @@ export default function Navbar() {
                         Admin Dashboard
                       </Link>
                       <Link
-                        href="/dashboard"
+                        href="/dashboard?view=participant"
                         className={`px-3.5 py-2 rounded-lg text-sm font-medium transition-colors flex items-center gap-1.5 ${
                           pathname === "/dashboard"
                             ? "bg-indigo-50 dark:bg-indigo-950/60 text-indigo-700 dark:text-indigo-300 font-semibold"
@@ -171,7 +171,7 @@ export default function Navbar() {
                       Admin Dashboard
                     </Link>
                     <Link
-                      href="/dashboard"
+                      href="/dashboard?view=participant"
                       onClick={() => setMobileMenuOpen(false)}
                       className="block px-3 py-2 rounded-md text-sm font-medium text-slate-700 dark:text-slate-200 hover:bg-slate-100 dark:hover:bg-slate-800"
                     >

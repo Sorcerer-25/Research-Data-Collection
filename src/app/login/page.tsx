@@ -15,7 +15,7 @@ function LoginForm() {
   const { login } = useAuth();
   const router = useRouter();
   const searchParams = useSearchParams();
-  const redirectPath = searchParams.get("redirect") || "/dashboard";
+  const explicitRedirect = searchParams.get("redirect");
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -31,7 +31,13 @@ function LoginForm() {
     setIsSubmitting(false);
 
     if (result.success) {
-      router.push(redirectPath);
+      if (explicitRedirect) {
+        router.push(explicitRedirect);
+      } else if (result.role === "admin") {
+        router.push("/admin");
+      } else {
+        router.push("/dashboard");
+      }
     } else {
       setErrorMessage(result.error || "Unable to sign in. Please verify your credentials.");
     }

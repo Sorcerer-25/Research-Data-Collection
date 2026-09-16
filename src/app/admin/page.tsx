@@ -8,17 +8,12 @@ import { AdminStudyData, getAdminStudyData } from "@/lib/supabase/client";
 import { getStudyConfig } from "@/lib/study-config";
 import AdminStatsCards from "@/components/AdminStatsCards";
 import ParticipantOverviewTable from "@/components/ParticipantOverviewTable";
-import SleepEntriesTable from "@/components/SleepEntriesTable";
 import {
   ShieldCheck,
   RefreshCw,
   Loader2,
-  Users,
   FileSpreadsheet,
   AlertOctagon,
-  Moon,
-  Activity,
-  Layers,
 } from "lucide-react";
 import { exportStudyDataToExcel } from "@/lib/excel-export";
 
@@ -30,8 +25,6 @@ export default function AdminDashboardPage() {
   const [adminData, setAdminData] = useState<AdminStudyData | null>(null);
   const [isLoadingData, setIsLoadingData] = useState<boolean>(true);
   const [isRefreshing, setIsRefreshing] = useState<boolean>(false);
-  const [activeTab, setActiveTab] = useState<"participants" | "entries">("participants");
-  const [selectedParticipantId, setSelectedParticipantId] = useState<string | undefined>(undefined);
 
   const fetchData = useCallback(async () => {
     setIsRefreshing(true);
@@ -92,7 +85,7 @@ export default function AdminDashboardPage() {
   return (
     <div className="space-y-6 pb-12">
       {/* 1. Admin Header & Controls */}
-      <div className="bg-white dark:bg-slate-900 rounded-2xl border border-slate-200/80 dark:border-slate-800 p-6 shadow-sm flex flex-col md:flex-row md:items-center justify-between gap-4">
+      <div className="bg-white dark:bg-slate-900 rounded-2xl border border-slate-200/80 dark:border-slate-800 p-5 sm:p-6 shadow-sm flex flex-col md:flex-row md:items-center justify-between gap-4">
         <div className="space-y-1">
           <div className="flex items-center gap-2">
             <span className="w-8 h-8 rounded-lg bg-indigo-600 text-white flex items-center justify-center shadow-sm">
@@ -103,7 +96,7 @@ export default function AdminDashboardPage() {
             </h1>
           </div>
           <p className="text-xs text-slate-500 dark:text-slate-400">
-            {config.studyName} • {config.targetDays}-Day Research Protocol ({config.startDate} to {config.endDate})
+            {config.studyName} • {config.targetDays}-Day Research Protocol
           </p>
         </div>
 
@@ -127,51 +120,14 @@ export default function AdminDashboardPage() {
         </div>
       </div>
 
-      {/* 2. Key Study KPI Metrics Cards */}
+      {/* 2. Single Key Metric Card: Total Participants Providing Data */}
       <AdminStatsCards stats={adminData.stats} />
 
-      {/* 3. Section Navigation Tabs */}
-      <div className="flex items-center gap-2 border-b border-slate-200 dark:border-slate-800 pb-2">
-        <button
-          onClick={() => setActiveTab("participants")}
-          className={`px-4 py-2 rounded-xl text-xs font-bold transition-all flex items-center gap-2 ${
-            activeTab === "participants"
-              ? "bg-indigo-600 text-white shadow-sm"
-              : "bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 text-slate-600 dark:text-slate-300 hover:bg-slate-50"
-          }`}
-        >
-          <Users className="w-3.5 h-3.5" />
-          <span>Participant Overview ({adminData.participantSummaries.length})</span>
-        </button>
-
-        <button
-          onClick={() => setActiveTab("entries")}
-          className={`px-4 py-2 rounded-xl text-xs font-bold transition-all flex items-center gap-2 ${
-            activeTab === "entries"
-              ? "bg-indigo-600 text-white shadow-sm"
-              : "bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 text-slate-600 dark:text-slate-300 hover:bg-slate-50"
-          }`}
-        >
-          <Layers className="w-3.5 h-3.5" />
-          <span>All Daily Sleep Entries ({adminData.logs.length})</span>
-        </button>
-      </div>
-
-      {/* 4. Tab Contents */}
-      {activeTab === "participants" ? (
-        <ParticipantOverviewTable
-          summaries={adminData.participantSummaries}
-          onSelectParticipant={(participantId) => {
-            setSelectedParticipantId(participantId);
-            setActiveTab("entries");
-          }}
-        />
-      ) : (
-        <SleepEntriesTable
-          adminData={adminData}
-          initialSelectedParticipantId={selectedParticipantId}
-        />
-      )}
+      {/* 3. Unified Audit Log & Participant Records Table */}
+      <ParticipantOverviewTable
+        summaries={adminData.participantSummaries}
+        allLogs={adminData.logs}
+      />
     </div>
   );
 }

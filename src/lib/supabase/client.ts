@@ -332,21 +332,8 @@ export async function getAdminStudyData(): Promise<AdminStudyData> {
     });
   }
 
-  // Filter study participants (excluding admin from participant pool metrics)
-  const studyParticipants = participants.filter((p) => p.role === "participant");
-  const totalParticipants = studyParticipants.length;
-  const totalEntries = logs.length;
-  const expectedEntries = totalParticipants * config.targetDays;
-  const overallCompletionPercentage = expectedEntries > 0
-    ? Number(((totalEntries / expectedEntries) * 100).toFixed(1))
-    : 0;
-
-  const totalSleepMinutesSum = logs.reduce((acc, l) => acc + (l.total_sleep_minutes || 0), 0);
-  const averageSleepMinutes = totalEntries > 0 ? Math.round(totalSleepMinutesSum / totalEntries) : 0;
-  const averageSleepFormatted = formatDurationHoursMinutes(averageSleepMinutes);
-
-  // Calculate participant summaries
-  const participantSummaries: ParticipantSummary[] = studyParticipants.map((p) => {
+  // Calculate participant summaries for all users (participants & admins)
+  const participantSummaries: ParticipantSummary[] = participants.map((p) => {
     const pLogs = logs.filter((l) => l.participant_id === p.id);
     const completedDays = pLogs.length;
     const completionPercentage = Number(((completedDays / config.targetDays) * 100).toFixed(1));
@@ -357,13 +344,14 @@ export async function getAdminStudyData(): Promise<AdminStudyData> {
     const minSleep = pMinutes.length > 0 ? Math.min(...pMinutes) : 0;
     const maxSleep = pMinutes.length > 0 ? Math.max(...pMinutes) : 0;
 
-    const sortedDates = [...pLogs].sort((a, b) => b.log_date.localeCompare(a.log_date));
-    const lastLogDate = sortedDates.length > 0 ? sortedDates[0].log_date : null;
+    const sortedLogs = [...pLogs].sort((a, b) => b.log_date.localeCompare(a.log_date));
+    const lastLogDate = sortedLogs.length > 0 ? sortedLogs[0].log_date : null;
 
     return {
       id: p.id,
       full_name: p.full_name,
       email: p.email,
+      role: p.role,
       expected_days: config.targetDays,
       completed_days: completedDays,
       completion_percentage: Math.min(100, completionPercentage),
@@ -372,14 +360,28 @@ export async function getAdminStudyData(): Promise<AdminStudyData> {
       min_sleep_minutes: minSleep,
       max_sleep_minutes: maxSleep,
       last_log_date: lastLogDate,
+      logs: sortedLogs,
     };
   });
+
+  const totalParticipants = participants.length;
+  const activeParticipantsCount = participantSummaries.filter((p) => p.completed_days > 0).length;
+  const totalEntries = logs.length;
+  const expectedEntries = totalParticipants * config.targetDays;
+  const overallCompletionPercentage = expectedEntries > 0
+    ? Number(((totalEntries / expectedEntries) * 100).toFixed(1))
+    : 0;
+
+  const totalSleepMinutesSum = logs.reduce((acc, l) => acc + (l.total_sleep_minutes || 0), 0);
+  const averageSleepMinutes = totalEntries > 0 ? Math.round(totalSleepMinutesSum / totalEntries) : 0;
+  const averageSleepFormatted = formatDurationHoursMinutes(averageSleepMinutes);
 
   return {
     participants,
     logs,
     stats: {
       total_participants: totalParticipants,
+      active_participants_count: activeParticipantsCount,
       total_entries: totalEntries,
       expected_entries: expectedEntries,
       overall_completion_percentage: overallCompletionPercentage,

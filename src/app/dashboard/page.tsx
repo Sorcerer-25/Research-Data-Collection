@@ -1,7 +1,7 @@
 "use client";
 
-import React, { useState, useEffect, useCallback } from "react";
-import { useRouter } from "next/navigation";
+import React, { useState, useEffect, useCallback, Suspense } from "react";
+import { useRouter, useSearchParams } from "next/navigation";
 import Link from "next/link";
 import { useAuth } from "@/lib/auth-context";
 import { SleepLog } from "@/types";
@@ -21,11 +21,15 @@ import {
   ChevronUp,
   Loader2,
   CheckCircle2,
+  ShieldCheck,
+  ArrowLeft,
 } from "lucide-react";
 
-export default function ParticipantDashboard() {
+function ParticipantDashboardContent() {
   const { user, role, isLoading: authLoading, logout } = useAuth();
   const router = useRouter();
+  const searchParams = useSearchParams();
+  const isParticipantPreview = searchParams.get("view") === "participant";
 
   const [logs, setLogs] = useState<SleepLog[]>([]);
   const [isLoadingLogs, setIsLoadingLogs] = useState<boolean>(true);
@@ -44,11 +48,14 @@ export default function ParticipantDashboard() {
     if (!authLoading) {
       if (!user) {
         router.push("/login");
+      } else if (role === "admin" && !isParticipantPreview) {
+        // Admin default view is the Admin Console
+        router.push("/admin");
       } else {
         fetchLogs(user.id);
       }
     }
-  }, [user, authLoading, router, fetchLogs]);
+  }, [user, role, authLoading, router, fetchLogs, isParticipantPreview]);
 
   if (authLoading || (!user && isLoadingLogs)) {
     return (
@@ -60,6 +67,7 @@ export default function ParticipantDashboard() {
   }
 
   if (!user) return null;
+  if (role === "admin" && !isParticipantPreview) return null;
 
   // Check if today is already logged
   const todayStr = new Date().toISOString().split("T")[0];
@@ -188,5 +196,20 @@ export default function ParticipantDashboard() {
         onRefresh={() => fetchLogs(user.id)}
       />
     </div>
+  );
+}
+
+export default function ParticipantDashboard() {
+  return (
+    <Suspense
+      fallback={
+        <div className="min-h-[60vh] flex flex-col items-center justify-center gap-3">
+          <Loader2 className="w-8 h-8 animate-spin text-indigo-600" />
+          <p className="text-xs font-semibold text-slate-500">Loading your sleep study data...</p>
+        </div>
+      }
+    >
+      <ParticipantDashboardContent />
+    </Suspense>
   );
 }

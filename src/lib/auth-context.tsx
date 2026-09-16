@@ -16,7 +16,7 @@ interface AuthContextType {
   role: UserRole | null;
   isLoading: boolean;
   isConfiguredWithSupabase: boolean;
-  login: (email: string, password: string) => Promise<{ success: boolean; error?: string }>;
+  login: (email: string, password: string) => Promise<{ success: boolean; user?: Participant; role?: UserRole; error?: string }>;
   register: (fullName: string, email: string, password: string) => Promise<{ success: boolean; error?: string }>;
   logout: () => Promise<void>;
   refreshUser: () => Promise<void>;
@@ -73,7 +73,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     }
 
     setUser(loggedInUser);
-    return { success: true };
+    return { success: true, user: loggedInUser, role: loggedInUser.role };
   };
 
   const register = async (fullName: string, email: string, password: string) => {
