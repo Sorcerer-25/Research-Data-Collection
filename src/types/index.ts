@@ -1,11 +1,11 @@
 export type UserRole = "participant" | "admin";
 
 export const AVAILABLE_BATCHES = [
-  "2022-2023",
-  "2023-2024",
-  "2024-2025",
-  "2025-2026",
-  "2026-2027",
+  "2022-2027",
+  "2023-2028",
+  "2024-2029",
+  "2025-2030",
+  "2026-2031",
 ] as const;
 
 export type BatchOption = (typeof AVAILABLE_BATCHES)[number];
