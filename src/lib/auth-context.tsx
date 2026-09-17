@@ -9,6 +9,7 @@ import {
   getCurrentUser,
   getSupabaseClient,
   isSupabaseConfigured,
+  updateParticipantProfile,
 } from "./supabase/client";
 
 interface AuthContextType {
@@ -17,7 +18,8 @@ interface AuthContextType {
   isLoading: boolean;
   isConfiguredWithSupabase: boolean;
   login: (email: string, password: string) => Promise<{ success: boolean; user?: Participant; role?: UserRole; error?: string }>;
-  register: (fullName: string, email: string, password: string) => Promise<{ success: boolean; error?: string }>;
+  register: (fullName: string, email: string, password: string, rollNumber?: string, batchNumber?: string) => Promise<{ success: boolean; error?: string }>;
+  updateProfile: (updates: { roll_number?: string; batch_number?: string; full_name?: string }) => Promise<{ success: boolean; user?: Participant; error?: string }>;
   logout: () => Promise<void>;
   refreshUser: () => Promise<void>;
 }
@@ -76,9 +78,15 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     return { success: true, user: loggedInUser, role: loggedInUser.role };
   };
 
-  const register = async (fullName: string, email: string, password: string) => {
+  const register = async (
+    fullName: string,
+    email: string,
+    password: string,
+    rollNumber?: string,
+    batchNumber?: string
+  ) => {
     setIsLoading(true);
-    const { user: newUser, error } = await authRegister(fullName, email, password);
+    const { user: newUser, error } = await authRegister(fullName, email, password, rollNumber, batchNumber);
     setIsLoading(false);
 
     if (error || !newUser) {
@@ -87,6 +95,20 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
 
     setUser(newUser);
     return { success: true };
+  };
+
+  const updateProfile = async (updates: { roll_number?: string; batch_number?: string; full_name?: string }) => {
+    if (!user) return { success: false, error: "Not logged in" };
+    setIsLoading(true);
+    const { user: updatedUser, error } = await updateParticipantProfile(user.id, updates);
+    setIsLoading(false);
+
+    if (error || !updatedUser) {
+      return { success: false, error: error || "Failed to update profile" };
+    }
+
+    setUser(updatedUser);
+    return { success: true, user: updatedUser };
   };
 
   const logout = async () => {
@@ -105,6 +127,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
         isConfiguredWithSupabase: isConfigured,
         login,
         register,
+        updateProfile,
         logout,
         refreshUser,
       }}

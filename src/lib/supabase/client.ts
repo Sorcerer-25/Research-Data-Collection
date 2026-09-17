@@ -41,9 +41,13 @@ export function getSupabaseClient(): SupabaseClient | null {
 export async function authRegister(
   fullName: string,
   email: string,
-  password: string
+  password: string,
+  rollNumber?: string,
+  batchNumber?: string
 ): Promise<{ user: Participant | null; error: string | null }> {
   const client = getSupabaseClient();
+  const trimmedRoll = rollNumber?.trim() || undefined;
+  const trimmedBatch = batchNumber?.trim() || undefined;
 
   if (client) {
     try {
@@ -53,6 +57,8 @@ export async function authRegister(
         options: {
           data: {
             full_name: fullName,
+            roll_number: trimmedRoll,
+            batch_number: trimmedBatch,
             role: "participant",
           },
         },
@@ -74,6 +80,8 @@ export async function authRegister(
           id: data.user.id,
           full_name: fullName,
           email: email,
+          roll_number: trimmedRoll,
+          batch_number: trimmedBatch,
           role: "participant",
           created_at: new Date().toISOString(),
         };
@@ -98,6 +106,8 @@ export async function authRegister(
     id: `p-${Date.now()}`,
     full_name: fullName,
     email: email.toLowerCase(),
+    roll_number: trimmedRoll,
+    batch_number: trimmedBatch,
     role: "participant",
     created_at: new Date().toISOString(),
   };
@@ -105,6 +115,65 @@ export async function authRegister(
   MockStorageManager.saveParticipants([...participants, newParticipant]);
   MockStorageManager.setSessionUser(newParticipant);
   return { user: newParticipant, error: null };
+}
+
+export async function updateParticipantProfile(
+  participantId: string,
+  updates: { roll_number?: string; batch_number?: string; full_name?: string }
+): Promise<{ user: Participant | null; error: string | null }> {
+  const client = getSupabaseClient();
+  const trimmedUpdates: { roll_number?: string; batch_number?: string; full_name?: string } = {};
+  if (updates.roll_number !== undefined) trimmedUpdates.roll_number = updates.roll_number.trim();
+  if (updates.batch_number !== undefined) trimmedUpdates.batch_number = updates.batch_number.trim();
+  if (updates.full_name !== undefined) trimmedUpdates.full_name = updates.full_name.trim();
+
+  if (client) {
+    try {
+      const { data, error } = await client
+        .from("participants")
+        .update(trimmedUpdates)
+        .eq("id", participantId)
+        .select()
+        .single();
+
+      if (error) {
+        return { user: null, error: error.message };
+      }
+
+      // Also update user metadata in Supabase Auth if needed
+      await client.auth.updateUser({
+        data: trimmedUpdates,
+      }).catch(() => {});
+
+      return { user: data as Participant, error: null };
+    } catch (err: any) {
+      return { user: null, error: err?.message || "Failed to update profile." };
+    }
+  }
+
+  // Fallback Mock Mode
+  await new Promise((resolve) => setTimeout(resolve, 250));
+  const participants = MockStorageManager.getParticipants();
+  const idx = participants.findIndex((p) => p.id === participantId);
+  if (idx < 0) {
+    return { user: null, error: "Participant not found." };
+  }
+
+  const updatedUser: Participant = {
+    ...participants[idx],
+    ...trimmedUpdates,
+    updated_at: new Date().toISOString(),
+  };
+
+  participants[idx] = updatedUser;
+  MockStorageManager.saveParticipants(participants);
+
+  const currentUser = MockStorageManager.getSessionUser();
+  if (currentUser?.id === participantId) {
+    MockStorageManager.setSessionUser(updatedUser);
+  }
+
+  return { user: updatedUser, error: null };
 }
 
 export async function authLogin(
@@ -137,6 +206,8 @@ export async function authLogin(
             id: data.user.id,
             full_name: data.user.user_metadata?.full_name || email.split("@")[0],
             email: data.user.email || email,
+            roll_number: data.user.user_metadata?.roll_number,
+            batch_number: data.user.user_metadata?.batch_number,
             role: (data.user.user_metadata?.role as any) || "participant",
             created_at: data.user.created_at,
           };
@@ -192,6 +263,8 @@ export async function getCurrentUser(): Promise<Participant | null> {
         id: session.user.id,
         full_name: session.user.user_metadata?.full_name || session.user.email?.split("@")[0] || "Participant",
         email: session.user.email || "",
+        roll_number: session.user.user_metadata?.roll_number,
+        batch_number: session.user.user_metadata?.batch_number,
         role: (session.user.user_metadata?.role as any) || "participant",
         created_at: session.user.created_at,
       };
@@ -315,7 +388,7 @@ export async function getAdminStudyData(): Promise<AdminStudyData> {
   if (client) {
     const [pRes, lRes] = await Promise.all([
       client.from("participants").select("*").order("created_at", { ascending: false }),
-      client.from("sleep_logs").select("*, participant:participants(full_name, email)").order("log_date", { ascending: false }),
+      client.from("sleep_logs").select("*, participant:participants(full_name, email, roll_number, batch_number)").order("log_date", { ascending: false }),
     ]);
 
     participants = pRes.data || [];
@@ -327,7 +400,7 @@ export async function getAdminStudyData(): Promise<AdminStudyData> {
       const p = participants.find((part) => part.id === l.participant_id);
       return {
         ...l,
-        participant: p ? { full_name: p.full_name, email: p.email } : undefined,
+        participant: p ? { full_name: p.full_name, email: p.email, roll_number: p.roll_number, batch_number: p.batch_number } : undefined,
       };
     });
   }
@@ -351,6 +424,8 @@ export async function getAdminStudyData(): Promise<AdminStudyData> {
       id: p.id,
       full_name: p.full_name,
       email: p.email,
+      roll_number: p.roll_number,
+      batch_number: p.batch_number,
       role: p.role,
       expected_days: config.targetDays,
       completed_days: completedDays,

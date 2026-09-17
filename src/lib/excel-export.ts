@@ -43,6 +43,8 @@ export async function exportStudyDataToExcel(data: AdminStudyData, filename?: st
     { header: "Participant ID", key: "participant_id", width: 22 },
     { header: "Name", key: "name", width: 24 },
     { header: "Email", key: "email", width: 28 },
+    { header: "Roll Number", key: "roll_number", width: 16 },
+    { header: "Batch Number", key: "batch_number", width: 16 },
     { header: "Study Day", key: "study_day", width: 14 },
     { header: "Log Date", key: "log_date", width: 15 },
     { header: "Bed Time", key: "bed_time", width: 14 },
@@ -58,6 +60,8 @@ export async function exportStudyDataToExcel(data: AdminStudyData, filename?: st
     const participant = data.participants.find((p) => p.id === log.participant_id) || {
       full_name: log.participant?.full_name || "Unknown",
       email: log.participant?.email || "Unknown",
+      roll_number: log.participant?.roll_number,
+      batch_number: log.participant?.batch_number,
     };
 
     const pLogs = data.logs.filter((l) => l.participant_id === log.participant_id);
@@ -78,6 +82,8 @@ export async function exportStudyDataToExcel(data: AdminStudyData, filename?: st
       participant_id: log.participant_id,
       name: participant.full_name,
       email: participant.email,
+      roll_number: participant.roll_number || "--",
+      batch_number: participant.batch_number || "--",
       study_day: studyDayLabel,
       log_date: log.log_date,
       bed_time: formatTime12Hour(log.bed_time),
@@ -99,7 +105,7 @@ export async function exportStudyDataToExcel(data: AdminStudyData, filename?: st
           fgColor: { argb: "FFF8FAFC" },
         };
       }
-      if (colNumber === 8 || colNumber === 9) {
+      if (colNumber === 10 || colNumber === 11) {
         cell.alignment = { horizontal: "right" };
       }
     });
@@ -126,6 +132,8 @@ export async function exportStudyDataToExcel(data: AdminStudyData, filename?: st
     { header: "Participant ID", key: "participant_id", width: 22 },
     { header: "Name", key: "name", width: 24 },
     { header: "Email", key: "email", width: 28 },
+    { header: "Roll Number", key: "roll_number", width: 16 },
+    { header: "Batch Number", key: "batch_number", width: 16 },
     { header: "Expected Days", key: "expected_days", width: 16 },
     { header: "Completed Days", key: "completed_days", width: 16 },
     { header: "Completion %", key: "completion_pct", width: 16 },
@@ -154,6 +162,8 @@ export async function exportStudyDataToExcel(data: AdminStudyData, filename?: st
       participant_id: summary.id,
       name: summary.full_name,
       email: summary.email,
+      roll_number: summary.roll_number || "--",
+      batch_number: summary.batch_number || "--",
       expected_days: summary.expected_days,
       completed_days: summary.completed_days,
       completion_pct: `${summary.completion_percentage}%`,
@@ -176,7 +186,7 @@ export async function exportStudyDataToExcel(data: AdminStudyData, filename?: st
           fgColor: { argb: "FFF8FAFC" },
         };
       }
-      if ([4, 5, 6, 7, 8, 9, 10, 11, 12, 13].includes(colNumber)) {
+      if ([6, 7, 8, 9, 10, 11, 12, 13, 14, 15].includes(colNumber)) {
         cell.alignment = { horizontal: "right" };
       }
     });

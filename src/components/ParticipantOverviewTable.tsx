@@ -101,7 +101,9 @@ export default function ParticipantOverviewTable({
         const term = searchTerm.toLowerCase();
         const matchesSearch =
           p.full_name.toLowerCase().includes(term) ||
-          p.email.toLowerCase().includes(term);
+          p.email.toLowerCase().includes(term) ||
+          (p.roll_number && p.roll_number.toLowerCase().includes(term)) ||
+          (p.batch_number && p.batch_number.toLowerCase().includes(term));
 
         if (!matchesSearch) return false;
 
@@ -236,7 +238,7 @@ export default function ParticipantOverviewTable({
               type="text"
               placeholder={
                 activeTab === "participants"
-                  ? "Search participant by name or email..."
+                  ? "Search by name, email, roll number, or batch..."
                   : "Search administrator by name or email..."
               }
               value={searchTerm}
@@ -415,7 +417,7 @@ export default function ParticipantOverviewTable({
                   className="py-3.5 px-4 cursor-pointer hover:text-slate-900 dark:hover:text-white"
                 >
                   <div className="flex items-center gap-1">
-                    Participant Name
+                    Participant &amp; Roll No.
                     <ArrowUpDown className="w-3 h-3 text-slate-400" />
                   </div>
                 </th>
@@ -488,15 +490,31 @@ export default function ParticipantOverviewTable({
                             : "hover:bg-slate-50/80 dark:hover:bg-slate-800/40"
                         }`}
                       >
-                        {/* Name & Avatar */}
+                        {/* Name, Roll No & Batch */}
                         <td className="py-3.5 px-4 font-semibold text-slate-900 dark:text-white">
                           <div className="flex items-center gap-2.5">
                             <div className="w-8 h-8 rounded-full bg-indigo-50 dark:bg-indigo-950/80 text-indigo-600 dark:text-indigo-400 flex items-center justify-center font-bold text-xs shrink-0">
                               {p.full_name.charAt(0).toUpperCase()}
                             </div>
-                            <span className="font-bold text-slate-900 dark:text-white">
-                              {p.full_name}
-                            </span>
+                            <div className="flex flex-col">
+                              <span className="font-bold text-slate-900 dark:text-white">
+                                {p.full_name}
+                              </span>
+                              <div className="flex flex-wrap items-center gap-1.5 mt-0.5 text-[10px]">
+                                {p.roll_number ? (
+                                  <span className="font-mono font-bold px-1.5 py-0.2 rounded bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-300 border border-slate-200 dark:border-slate-700">
+                                    Roll: {p.roll_number}
+                                  </span>
+                                ) : (
+                                  <span className="italic text-slate-400">No Roll No</span>
+                                )}
+                                {p.batch_number && (
+                                  <span className="font-medium px-1.5 py-0.2 rounded bg-indigo-50 dark:bg-indigo-950/60 text-indigo-700 dark:text-indigo-300 border border-indigo-200/60 dark:border-indigo-800/60">
+                                    Batch: {p.batch_number}
+                                  </span>
+                                )}
+                              </div>
+                            </div>
                           </div>
                         </td>
 
@@ -633,10 +651,15 @@ export default function ParticipantOverviewTable({
                           <td colSpan={5} className="p-4 sm:p-5 border-y border-indigo-100 dark:border-indigo-950">
                             <div className="space-y-3.5">
                               <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2">
-                                <h4 className="text-xs font-bold uppercase tracking-wider text-slate-700 dark:text-slate-300 flex items-center gap-1.5">
-                                  <Calendar className="w-3.5 h-3.5 text-indigo-600" />
-                                  <span>Daily Protocol Logs for {p.full_name}</span>
-                                </h4>
+                                <div className="space-y-0.5">
+                                  <h4 className="text-xs font-bold uppercase tracking-wider text-slate-700 dark:text-slate-300 flex items-center gap-1.5">
+                                    <Calendar className="w-3.5 h-3.5 text-indigo-600" />
+                                    <span>Daily Protocol Logs for {p.full_name}</span>
+                                  </h4>
+                                  <p className="text-[11px] text-slate-500 dark:text-slate-400">
+                                    Roll No: <strong className="text-slate-700 dark:text-slate-200">{p.roll_number || "N/A"}</strong> • Batch: <strong className="text-slate-700 dark:text-slate-200">{p.batch_number || "N/A"}</strong>
+                                  </p>
+                                </div>
                                 <span className="text-xs font-medium text-slate-500">
                                   {participantLogs.length} of {p.expected_days} entries recorded ({p.completion_percentage}% protocol completion)
                                 </span>

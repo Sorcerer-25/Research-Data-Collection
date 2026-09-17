@@ -4,6 +4,8 @@ export interface Participant {
   id: string;
   full_name: string;
   email: string;
+  roll_number?: string;
+  batch_number?: string;
   role: UserRole;
   created_at: string;
   updated_at?: string;
@@ -21,6 +23,8 @@ export interface SleepLog {
   participant?: {
     full_name: string;
     email: string;
+    roll_number?: string;
+    batch_number?: string;
   };
 }
 
@@ -37,6 +41,8 @@ export interface ParticipantSummary {
   id: string;
   full_name: string;
   email: string;
+  roll_number?: string;
+  batch_number?: string;
   role?: UserRole;
   expected_days: number;
   completed_days: number;

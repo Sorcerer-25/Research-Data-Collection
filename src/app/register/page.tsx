@@ -9,6 +9,8 @@ import { getStudyConfig } from "@/lib/study-config";
 
 export default function RegisterPage() {
   const [fullName, setFullName] = useState<string>("");
+  const [rollNumber, setRollNumber] = useState<string>("");
+  const [batchNumber, setBatchNumber] = useState<string>("");
   const [email, setEmail] = useState<string>("");
   const [password, setPassword] = useState<string>("");
   const [confirmPassword, setConfirmPassword] = useState<string>("");
@@ -28,6 +30,16 @@ export default function RegisterPage() {
       return;
     }
 
+    if (!rollNumber.trim()) {
+      setErrorMessage("Please enter your participant roll number.");
+      return;
+    }
+
+    if (!batchNumber.trim()) {
+      setErrorMessage("Please enter your batch number or group.");
+      return;
+    }
+
     if (password.length < 6) {
       setErrorMessage("Password must be at least 6 characters long.");
       return;
@@ -39,7 +51,13 @@ export default function RegisterPage() {
     }
 
     setIsSubmitting(true);
-    const result = await register(fullName.trim(), email.trim(), password);
+    const result = await register(
+      fullName.trim(),
+      email.trim(),
+      password,
+      rollNumber.trim(),
+      batchNumber.trim()
+    );
     setIsSubmitting(false);
 
     if (result.success) {
@@ -90,6 +108,38 @@ export default function RegisterPage() {
                 onChange={(e) => setFullName(e.target.value)}
                 placeholder="e.g., Johnathan Doe"
                 className="w-full pl-9 pr-4 py-2.5 rounded-xl border border-slate-300 dark:border-slate-700 bg-white dark:bg-slate-800 text-slate-900 dark:text-white text-sm focus:ring-2 focus:ring-indigo-500 shadow-sm"
+              />
+            </div>
+          </div>
+
+          {/* Roll Number & Batch Number in a 2-column grid */}
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+            <div>
+              <label className="block text-xs font-bold uppercase tracking-wider text-slate-600 dark:text-slate-300 mb-1.5">
+                Roll Number <span className="text-rose-500">*</span>
+              </label>
+              <input
+                type="text"
+                id="register-rollnumber"
+                required
+                value={rollNumber}
+                onChange={(e) => setRollNumber(e.target.value)}
+                placeholder="e.g., 21CS045"
+                className="w-full px-3.5 py-2.5 rounded-xl border border-slate-300 dark:border-slate-700 bg-white dark:bg-slate-800 text-slate-900 dark:text-white text-sm focus:ring-2 focus:ring-indigo-500 shadow-sm uppercase font-mono"
+              />
+            </div>
+            <div>
+              <label className="block text-xs font-bold uppercase tracking-wider text-slate-600 dark:text-slate-300 mb-1.5">
+                Batch Number <span className="text-rose-500">*</span>
+              </label>
+              <input
+                type="text"
+                id="register-batchnumber"
+                required
+                value={batchNumber}
+                onChange={(e) => setBatchNumber(e.target.value)}
+                placeholder="e.g., 2022-2026"
+                className="w-full px-3.5 py-2.5 rounded-xl border border-slate-300 dark:border-slate-700 bg-white dark:bg-slate-800 text-slate-900 dark:text-white text-sm focus:ring-2 focus:ring-indigo-500 shadow-sm"
               />
             </div>
           </div>
