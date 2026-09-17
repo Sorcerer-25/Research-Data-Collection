@@ -131,6 +131,9 @@ export async function exportStudyDataToExcel(data: AdminStudyData, filename?: st
     { header: "Completion %", key: "completion_pct", width: 16 },
     { header: "Average Sleep Minutes", key: "avg_sleep_minutes", width: 24 },
     { header: "Average Sleep Hours", key: "avg_sleep_hours", width: 22 },
+    { header: "Days < 6 hrs", key: "days_under_6", width: 16 },
+    { header: "Days 6–7 hrs", key: "days_6_to_7", width: 16 },
+    { header: "Days > 7 hrs", key: "days_over_7", width: 16 },
     { header: "Minimum Sleep", key: "min_sleep", width: 18 },
     { header: "Maximum Sleep", key: "max_sleep", width: 18 },
   ];
@@ -142,6 +145,11 @@ export async function exportStudyDataToExcel(data: AdminStudyData, filename?: st
     const minFormatted = summary.completed_days > 0 ? formatDurationHoursMinutes(summary.min_sleep_minutes) : "--";
     const maxFormatted = summary.completed_days > 0 ? formatDurationHoursMinutes(summary.max_sleep_minutes) : "--";
 
+    const pLogs = summary.logs || data.logs.filter((l) => l.participant_id === summary.id);
+    const daysUnder6 = pLogs.filter((l) => l.total_sleep_minutes < 360).length;
+    const days6to7 = pLogs.filter((l) => l.total_sleep_minutes >= 360 && l.total_sleep_minutes <= 420).length;
+    const daysOver7 = pLogs.filter((l) => l.total_sleep_minutes > 420).length;
+
     const row = summarySheet.addRow({
       participant_id: summary.id,
       name: summary.full_name,
@@ -151,6 +159,9 @@ export async function exportStudyDataToExcel(data: AdminStudyData, filename?: st
       completion_pct: `${summary.completion_percentage}%`,
       avg_sleep_minutes: summary.average_sleep_minutes,
       avg_sleep_hours: avgHours,
+      days_under_6: `${daysUnder6} / ${summary.completed_days}`,
+      days_6_to_7: `${days6to7} / ${summary.completed_days}`,
+      days_over_7: `${daysOver7} / ${summary.completed_days}`,
       min_sleep: minFormatted,
       max_sleep: maxFormatted,
     });
@@ -165,7 +176,7 @@ export async function exportStudyDataToExcel(data: AdminStudyData, filename?: st
           fgColor: { argb: "FFF8FAFC" },
         };
       }
-      if ([4, 5, 6, 7, 8, 9, 10].includes(colNumber)) {
+      if ([4, 5, 6, 7, 8, 9, 10, 11, 12, 13].includes(colNumber)) {
         cell.alignment = { horizontal: "right" };
       }
     });
