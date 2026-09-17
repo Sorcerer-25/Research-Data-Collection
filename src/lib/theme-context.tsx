@@ -15,6 +15,14 @@ export interface ThemeOption {
 
 export const LIGHT_THEMES: ThemeOption[] = [
   {
+    id: "sunset-amber",
+    name: "Warm Sunset",
+    description: "Golden peach & gentle dusk terracotta",
+    mode: "light",
+    primaryColor: "#d97706",
+    previewColors: ["#d97706", "#fffbeb", "#fde68a"],
+  },
+  {
     id: "clinical-clean",
     name: "Clinical Clean",
     description: "Crisp slate with classic medical indigo",
@@ -37,14 +45,6 @@ export const LIGHT_THEMES: ThemeOption[] = [
     mode: "light",
     primaryColor: "#059669",
     previewColors: ["#059669", "#f0fdf4", "#a7f3d0"],
-  },
-  {
-    id: "sunset-amber",
-    name: "Warm Sunset",
-    description: "Golden peach & gentle dusk terracotta",
-    mode: "light",
-    primaryColor: "#d97706",
-    previewColors: ["#d97706", "#fffbeb", "#fde68a"],
   },
   {
     id: "rose-quartz",
@@ -139,7 +139,7 @@ const STORAGE_KEY_LIGHT = "sleep_study_light_theme";
 const STORAGE_KEY_DARK = "sleep_study_dark_theme";
 
 export function ThemeProvider({ children }: { children: React.ReactNode }) {
-  const [mode, setModeState] = useState<ThemeMode>("light");
+  const [mode, setModeState] = useState<ThemeMode>("dark");
   const [lightThemeId, setLightThemeIdState] = useState<string>("sunset-amber");
   const [darkThemeId, setDarkThemeIdState] = useState<string>("midnight-indigo");
   const [isThemeModalOpen, setIsThemeModalOpen] = useState<boolean>(false);
@@ -156,7 +156,7 @@ export function ThemeProvider({ children }: { children: React.ReactNode }) {
       if (savedMode === "light" || savedMode === "dark") {
         setModeState(savedMode);
       } else {
-        setModeState("light"); // Default is light mode
+        setModeState("dark"); // Default is dark mode
       }
 
       if (savedLight && LIGHT_THEMES.some((t) => t.id === savedLight)) {

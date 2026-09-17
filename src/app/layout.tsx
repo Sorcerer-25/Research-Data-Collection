@@ -22,7 +22,7 @@ export const viewport: Viewport = {
   width: "device-width",
   initialScale: 1,
   maximumScale: 1,
-  themeColor: "#d97706",
+  themeColor: "#6366f1",
 };
 
 export default function RootLayout({
@@ -31,7 +31,36 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="en" className={inter.variable} suppressHydrationWarning>
+    <html
+      lang="en"
+      className={`${inter.variable} dark`}
+      data-theme="midnight-indigo"
+      data-mode="dark"
+      suppressHydrationWarning
+    >
+      <head>
+        <script
+          dangerouslySetInnerHTML={{
+            __html: `
+              (function() {
+                try {
+                  var mode = localStorage.getItem('sleep_study_theme_mode') || 'dark';
+                  var darkTheme = localStorage.getItem('sleep_study_dark_theme') || 'midnight-indigo';
+                  var lightTheme = localStorage.getItem('sleep_study_light_theme') || 'sunset-amber';
+                  var activeTheme = mode === 'dark' ? darkTheme : lightTheme;
+                  if (mode === 'dark') {
+                    document.documentElement.classList.add('dark');
+                  } else {
+                    document.documentElement.classList.remove('dark');
+                  }
+                  document.documentElement.setAttribute('data-theme', activeTheme);
+                  document.documentElement.setAttribute('data-mode', mode);
+                } catch(e) {}
+              })();
+            `,
+          }}
+        />
+      </head>
       <body className="bg-slate-50 dark:bg-slate-950 text-slate-900 dark:text-slate-100 min-h-screen flex flex-col antialiased selection:bg-indigo-500 selection:text-white">
         <ThemeProvider>
           <AuthProvider>
