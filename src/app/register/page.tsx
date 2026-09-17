@@ -4,8 +4,9 @@ import React, { useState } from "react";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
 import { useAuth } from "@/lib/auth-context";
-import { Moon, Lock, Mail, User, AlertCircle, Loader2, ArrowRight, ShieldCheck } from "lucide-react";
+import { Moon, Lock, Mail, User, AlertCircle, Loader2, ArrowRight, ShieldCheck, ChevronDown } from "lucide-react";
 import { getStudyConfig } from "@/lib/study-config";
+import { AVAILABLE_BATCHES } from "@/types";
 
 export default function RegisterPage() {
   const [fullName, setFullName] = useState<string>("");
@@ -31,12 +32,12 @@ export default function RegisterPage() {
     }
 
     if (!rollNumber.trim()) {
-      setErrorMessage("Please enter your participant roll number.");
+      setErrorMessage("Please enter your participant roll number (1-250).");
       return;
     }
 
     if (!batchNumber.trim()) {
-      setErrorMessage("Please enter your batch number or group.");
+      setErrorMessage("Please select your batch.");
       return;
     }
 
@@ -124,23 +125,33 @@ export default function RegisterPage() {
                 required
                 value={rollNumber}
                 onChange={(e) => setRollNumber(e.target.value)}
-                placeholder="e.g., 21CS045"
+                placeholder="1-250"
                 className="w-full px-3.5 py-2.5 rounded-xl border border-slate-300 dark:border-slate-700 bg-white dark:bg-slate-800 text-slate-900 dark:text-white text-sm focus:ring-2 focus:ring-indigo-500 shadow-sm uppercase font-mono"
               />
             </div>
             <div>
               <label className="block text-xs font-bold uppercase tracking-wider text-slate-600 dark:text-slate-300 mb-1.5">
-                Batch Number <span className="text-rose-500">*</span>
+                Batch <span className="text-rose-500">*</span>
               </label>
-              <input
-                type="text"
-                id="register-batchnumber"
-                required
-                value={batchNumber}
-                onChange={(e) => setBatchNumber(e.target.value)}
-                placeholder="e.g., 2022-2026"
-                className="w-full px-3.5 py-2.5 rounded-xl border border-slate-300 dark:border-slate-700 bg-white dark:bg-slate-800 text-slate-900 dark:text-white text-sm focus:ring-2 focus:ring-indigo-500 shadow-sm"
-              />
+              <div className="relative">
+                <select
+                  id="register-batchnumber"
+                  required
+                  value={batchNumber}
+                  onChange={(e) => setBatchNumber(e.target.value)}
+                  className="w-full px-3.5 pr-8 py-2.5 rounded-xl border border-slate-300 dark:border-slate-700 bg-white dark:bg-slate-800 text-slate-900 dark:text-white text-sm focus:ring-2 focus:ring-indigo-500 shadow-sm appearance-none cursor-pointer"
+                >
+                  <option value="" disabled>
+                    Select Batch
+                  </option>
+                  {AVAILABLE_BATCHES.map((b) => (
+                    <option key={b} value={b}>
+                      {b}
+                    </option>
+                  ))}
+                </select>
+                <ChevronDown className="w-4 h-4 text-slate-400 absolute right-3 top-1/2 -translate-y-1/2 pointer-events-none" />
+              </div>
             </div>
           </div>
 

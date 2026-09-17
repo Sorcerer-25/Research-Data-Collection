@@ -1,7 +1,7 @@
 "use client";
 
 import React, { useState, useMemo } from "react";
-import { ParticipantSummary, SleepLog } from "@/types";
+import { ParticipantSummary, SleepLog, AVAILABLE_BATCHES } from "@/types";
 import {
   formatDateDisplay,
   formatDurationHoursMinutes,
@@ -23,6 +23,7 @@ import {
   UserCheck,
   X,
   Filter,
+  Layers,
 } from "lucide-react";
 
 interface ParticipantOverviewTableProps {
@@ -38,6 +39,7 @@ export default function ParticipantOverviewTable({
   const [activeTab, setActiveTab] = useState<"participants" | "admins">("participants");
   const [searchTerm, setSearchTerm] = useState<string>("");
   const [durationFilter, setDurationFilter] = useState<"all" | "short" | "long" | "mid">("all");
+  const [batchFilter, setBatchFilter] = useState<string>("all");
   const [sortField, setSortField] = useState<"name" | "days" | "duration">("days");
   const [sortDirection, setSortDirection] = useState<"asc" | "desc">("desc");
   const [expandedIds, setExpandedIds] = useState<Set<string>>(new Set());
@@ -94,7 +96,7 @@ export default function ParticipantOverviewTable({
     setExpandedIds(new Set());
   };
 
-  // Duration Filter & Search logic for Participants
+  // Duration Filter, Batch Filter & Search logic for Participants
   const filteredParticipants = useMemo(() => {
     return participantList
       .filter((p) => {
@@ -106,6 +108,11 @@ export default function ParticipantOverviewTable({
           (p.batch_number && p.batch_number.toLowerCase().includes(term));
 
         if (!matchesSearch) return false;
+
+        // Batch Filter
+        if (batchFilter !== "all" && p.batch_number !== batchFilter) {
+          return false;
+        }
 
         // Sleep Duration Filter (< 6h = < 360 min, > 7h = > 420 min, 6-7h = 360-420 min)
         if (durationFilter === "short") {
@@ -164,6 +171,7 @@ export default function ParticipantOverviewTable({
             onClick={() => {
               setActiveTab("participants");
               setSearchTerm("");
+              setBatchFilter("all");
               setExpandedIds(new Set());
             }}
             className={`pb-3.5 px-3 text-xs sm:text-sm font-bold transition-all flex items-center gap-2 border-b-2 ${
@@ -181,7 +189,7 @@ export default function ParticipantOverviewTable({
                   : "bg-slate-200 dark:bg-slate-800 text-slate-600 dark:text-slate-400"
               }`}
             >
-              {durationFilter !== "all" || searchTerm
+              {durationFilter !== "all" || batchFilter !== "all" || searchTerm
                 ? `${filteredParticipants.length} of ${participantList.length}`
                 : participantList.length}
             </span>
@@ -191,6 +199,7 @@ export default function ParticipantOverviewTable({
             onClick={() => {
               setActiveTab("admins");
               setSearchTerm("");
+              setBatchFilter("all");
               setExpandedIds(new Set());
             }}
             className={`pb-3.5 px-3 text-xs sm:text-sm font-bold transition-all flex items-center gap-2 border-b-2 ${
@@ -228,23 +237,43 @@ export default function ParticipantOverviewTable({
         </div>
       </div>
 
-      {/* 2. Controls Bar: Search & Duration Filters */}
+      {/* 2. Controls Bar: Search, Batch & Duration Filters */}
       <div className="p-4 sm:p-5 border-b border-slate-200/80 dark:border-slate-800 space-y-3.5">
         <div className="flex flex-col md:flex-row items-stretch md:items-center justify-between gap-3">
-          {/* Search Box */}
-          <div className="relative flex-1 max-w-md">
-            <Search className="w-4 h-4 text-slate-400 absolute left-3 top-1/2 -translate-y-1/2" />
-            <input
-              type="text"
-              placeholder={
-                activeTab === "participants"
-                  ? "Search by name, email, roll number, or batch..."
-                  : "Search administrator by name or email..."
-              }
-              value={searchTerm}
-              onChange={(e) => setSearchTerm(e.target.value)}
-              className="w-full pl-9 pr-3.5 py-2 rounded-xl border border-slate-300 dark:border-slate-700 bg-slate-50 dark:bg-slate-800 text-xs text-slate-900 dark:text-white focus:ring-2 focus:ring-indigo-500 shadow-sm"
-            />
+          {/* Search Box & Batch Filter */}
+          <div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-2.5 flex-1 max-w-xl">
+            <div className="relative flex-1">
+              <Search className="w-4 h-4 text-slate-400 absolute left-3 top-1/2 -translate-y-1/2" />
+              <input
+                type="text"
+                placeholder={
+                  activeTab === "participants"
+                    ? "Search by name, email, roll number, or batch..."
+                    : "Search administrator by name or email..."
+                }
+                value={searchTerm}
+                onChange={(e) => setSearchTerm(e.target.value)}
+                className="w-full pl-9 pr-3.5 py-2 rounded-xl border border-slate-300 dark:border-slate-700 bg-slate-50 dark:bg-slate-800 text-xs text-slate-900 dark:text-white focus:ring-2 focus:ring-indigo-500 shadow-sm"
+              />
+            </div>
+
+            {activeTab === "participants" && (
+              <div className="relative shrink-0">
+                <select
+                  value={batchFilter}
+                  onChange={(e) => setBatchFilter(e.target.value)}
+                  className="w-full sm:w-auto px-3 pr-8 py-2 rounded-xl border border-slate-300 dark:border-slate-700 bg-slate-50 dark:bg-slate-800 text-xs font-semibold text-slate-800 dark:text-slate-200 focus:ring-2 focus:ring-indigo-500 shadow-sm appearance-none cursor-pointer"
+                >
+                  <option value="all">All Batches</option>
+                  {AVAILABLE_BATCHES.map((b) => (
+                    <option key={b} value={b}>
+                      Batch {b}
+                    </option>
+                  ))}
+                </select>
+                <ChevronDown className="w-3.5 h-3.5 text-slate-400 absolute right-2.5 top-1/2 -translate-y-1/2 pointer-events-none" />
+              </div>
+            )}
           </div>
 
           {/* Sleep Duration Filter Toggles with Counts (Participants Tab Only) */}
@@ -358,6 +387,19 @@ export default function ParticipantOverviewTable({
                 Total enrolled: <strong className="text-slate-700 dark:text-slate-300">{participantList.length}</strong> (admins excluded)
               </span>
 
+              {batchFilter !== "all" && (
+                <span className="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full text-[11px] font-bold bg-indigo-50 dark:bg-indigo-950/80 text-indigo-700 dark:text-indigo-300 border border-indigo-200 dark:border-indigo-800">
+                  <span>Batch: {batchFilter}</span>
+                  <button
+                    onClick={() => setBatchFilter("all")}
+                    className="hover:text-indigo-900 dark:hover:text-white p-0.5 rounded"
+                    title="Clear batch filter"
+                  >
+                    <X className="w-3 h-3" />
+                  </button>
+                </span>
+              )}
+
               {durationFilter !== "all" && (
                 <span className="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full text-[11px] font-bold bg-indigo-50 dark:bg-indigo-950/80 text-indigo-700 dark:text-indigo-300 border border-indigo-200 dark:border-indigo-800">
                   <span>
@@ -387,10 +429,11 @@ export default function ParticipantOverviewTable({
               )}
             </div>
 
-            {(durationFilter !== "all" || searchTerm) && (
+            {(durationFilter !== "all" || batchFilter !== "all" || searchTerm) && (
               <button
                 onClick={() => {
                   setDurationFilter("all");
+                  setBatchFilter("all");
                   setSearchTerm("");
                 }}
                 className="text-xs text-indigo-600 dark:text-indigo-400 hover:text-indigo-800 dark:hover:text-indigo-300 font-semibold underline underline-offset-2"

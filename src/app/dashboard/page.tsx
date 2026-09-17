@@ -4,7 +4,7 @@ import React, { useState, useEffect, useCallback, Suspense } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
 import Link from "next/link";
 import { useAuth } from "@/lib/auth-context";
-import { SleepLog } from "@/types";
+import { SleepLog, AVAILABLE_BATCHES } from "@/types";
 import { getParticipantLogs } from "@/lib/supabase/client";
 import { getStudyConfig, getStudyDayNumber, isDateWithinStudy } from "@/lib/study-config";
 import StudyProgress from "@/components/StudyProgress";
@@ -282,7 +282,7 @@ function ParticipantDashboardContent() {
                     required
                     value={rollNumberInput}
                     onChange={(e) => setRollNumberInput(e.target.value)}
-                    placeholder="e.g., 21CS045"
+                    placeholder="1-250"
                     className="w-full pl-9 pr-4 py-2.5 rounded-xl border border-slate-300 dark:border-slate-700 bg-white dark:bg-slate-800 text-slate-900 dark:text-white text-sm focus:ring-2 focus:ring-indigo-500 shadow-sm uppercase font-mono"
                   />
                 </div>
@@ -290,18 +290,26 @@ function ParticipantDashboardContent() {
 
               <div>
                 <label className="block text-xs font-bold uppercase tracking-wider text-slate-600 dark:text-slate-300 mb-1.5">
-                  Batch Number / Group <span className="text-rose-500">*</span>
+                  Batch <span className="text-rose-500">*</span>
                 </label>
                 <div className="relative">
-                  <Layers className="w-4 h-4 text-slate-400 absolute left-3 top-1/2 -translate-y-1/2" />
-                  <input
-                    type="text"
+                  <Layers className="w-4 h-4 text-slate-400 absolute left-3 top-1/2 -translate-y-1/2 pointer-events-none" />
+                  <select
                     required
                     value={batchNumberInput}
                     onChange={(e) => setBatchNumberInput(e.target.value)}
-                    placeholder="e.g., 2022-2026 or Batch A"
-                    className="w-full pl-9 pr-4 py-2.5 rounded-xl border border-slate-300 dark:border-slate-700 bg-white dark:bg-slate-800 text-slate-900 dark:text-white text-sm focus:ring-2 focus:ring-indigo-500 shadow-sm"
-                  />
+                    className="w-full pl-9 pr-8 py-2.5 rounded-xl border border-slate-300 dark:border-slate-700 bg-white dark:bg-slate-800 text-slate-900 dark:text-white text-sm focus:ring-2 focus:ring-indigo-500 shadow-sm appearance-none cursor-pointer"
+                  >
+                    <option value="" disabled>
+                      Select Batch
+                    </option>
+                    {AVAILABLE_BATCHES.map((batch) => (
+                      <option key={batch} value={batch}>
+                        {batch}
+                      </option>
+                    ))}
+                  </select>
+                  <ChevronDown className="w-4 h-4 text-slate-400 absolute right-3 top-1/2 -translate-y-1/2 pointer-events-none" />
                 </div>
               </div>
 
