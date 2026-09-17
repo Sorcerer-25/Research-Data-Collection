@@ -57,6 +57,20 @@ function ParticipantDashboardContent() {
     setIsLoadingLogs(false);
   }, []);
 
+  // Determine participant's dynamic start date (earliest log date, registration date, or today)
+  const participantStartDate = React.useMemo(() => {
+    if (logs.length > 0) {
+      const sortedDates = [...logs].map((l) => l.log_date).sort();
+      return sortedDates[0];
+    }
+    if (user?.created_at) {
+      return user.created_at.split("T")[0];
+    }
+    return getStudyConfig().startDate;
+  }, [logs, user]);
+
+  const config = React.useMemo(() => getStudyConfig(participantStartDate), [participantStartDate]);
+
   useEffect(() => {
     if (!authLoading) {
       if (!user) {
@@ -113,37 +127,6 @@ function ParticipantDashboardContent() {
     }
   };
 
-  if (authLoading || (!user && isLoadingLogs)) {
-    return (
-      <div className="min-h-[60vh] flex flex-col items-center justify-center gap-3">
-        <Loader2 className="w-8 h-8 animate-spin text-indigo-600" />
-        <p className="text-xs font-semibold text-slate-500">Loading your sleep study data...</p>
-      </div>
-    );
-  }
-
-  if (!user) return null;
-  if (role === "admin" && !isParticipantPreview) return null;
-
-  // Check if today is already logged
-  const todayStr = new Date().toISOString().split("T")[0];
-  const isTodayLogged = logs.some((l) => l.log_date === todayStr);
-  const firstName = user.full_name.split(" ")[0] || "Participant";
-
-  // Determine participant's dynamic start date (earliest log date, registration date, or today)
-  const participantStartDate = React.useMemo(() => {
-    if (logs.length > 0) {
-      const sortedDates = [...logs].map((l) => l.log_date).sort();
-      return sortedDates[0];
-    }
-    if (user?.created_at) {
-      return user.created_at.split("T")[0];
-    }
-    return getStudyConfig().startDate;
-  }, [logs, user]);
-
-  const config = React.useMemo(() => getStudyConfig(participantStartDate), [participantStartDate]);
-
   const scrollToForm = () => {
     setTimeout(() => {
       const formEl = document.getElementById("sleep-form-section");
@@ -166,7 +149,9 @@ function ParticipantDashboardContent() {
   };
 
   const handleFormSuccess = (savedLog: SleepLog) => {
-    fetchLogs(user.id);
+    if (user) {
+      fetchLogs(user.id);
+    }
     setShowLogForm(false);
     setSelectedFormDate(undefined);
     // Smoothly scroll to the progress calendar to view updated completion status
@@ -177,6 +162,23 @@ function ParticipantDashboardContent() {
       }
     }, 80);
   };
+
+  if (authLoading || (!user && isLoadingLogs)) {
+    return (
+      <div className="min-h-[60vh] flex flex-col items-center justify-center gap-3">
+        <Loader2 className="w-8 h-8 animate-spin text-indigo-600" />
+        <p className="text-xs font-semibold text-slate-500">Loading your sleep study data...</p>
+      </div>
+    );
+  }
+
+  if (!user) return null;
+  if (role === "admin" && !isParticipantPreview) return null;
+
+  // Check if today is already logged
+  const todayStr = new Date().toISOString().split("T")[0];
+  const isTodayLogged = logs.some((l) => l.log_date === todayStr);
+  const firstName = user.full_name.split(" ")[0] || "Participant";
 
   return (
     <div className="max-w-4xl mx-auto space-y-6 pb-12">

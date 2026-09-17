@@ -99,9 +99,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
 
   const updateProfile = async (updates: { roll_number?: string; batch_number?: string; full_name?: string }) => {
     if (!user) return { success: false, error: "Not logged in" };
-    setIsLoading(true);
     const { user: updatedUser, error } = await updateParticipantProfile(user.id, updates);
-    setIsLoading(false);
 
     if (error || !updatedUser) {
       return { success: false, error: error || "Failed to update profile" };
