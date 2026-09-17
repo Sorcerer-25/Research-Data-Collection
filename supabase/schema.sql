@@ -15,14 +15,18 @@ CREATE TABLE IF NOT EXISTS public.participants (
     id UUID PRIMARY KEY REFERENCES auth.users(id) ON DELETE CASCADE,
     full_name TEXT NOT NULL,
     email TEXT NOT NULL UNIQUE,
+    roll_number TEXT,
+    batch_number TEXT,
     role TEXT NOT NULL DEFAULT 'participant' CHECK (role IN ('participant', 'admin')),
     created_at TIMESTAMPTZ NOT NULL DEFAULT timezone('utc'::text, now()),
     updated_at TIMESTAMPTZ NOT NULL DEFAULT timezone('utc'::text, now())
 );
 
--- Index for fast lookup by email and role
+-- Index for fast lookup by email, role, roll_number, and batch_number
 CREATE INDEX IF NOT EXISTS idx_participants_email ON public.participants(email);
 CREATE INDEX IF NOT EXISTS idx_participants_role ON public.participants(role);
+CREATE INDEX IF NOT EXISTS idx_participants_roll_number ON public.participants(roll_number);
+CREATE INDEX IF NOT EXISTS idx_participants_batch_number ON public.participants(batch_number);
 
 -- ------------------------------------------------------------------------------
 -- 2. Study Settings Table
@@ -95,16 +99,21 @@ CREATE TRIGGER tr_sleep_logs_updated_at
 CREATE OR REPLACE FUNCTION public.handle_new_user()
 RETURNS TRIGGER AS $$
 BEGIN
-    INSERT INTO public.participants (id, full_name, email, role)
+    INSERT INTO public.participants (id, full_name, email, role, roll_number, batch_number)
     VALUES (
         NEW.id,
         COALESCE(NEW.raw_user_meta_data->>'full_name', split_part(NEW.email, '@', 1)),
         NEW.email,
-        COALESCE(NEW.raw_user_meta_data->>'role', 'participant')
+        COALESCE(NEW.raw_user_meta_data->>'role', 'participant'),
+        NEW.raw_user_meta_data->>'roll_number',
+        NEW.raw_user_meta_data->>'batch_number'
     )
     ON CONFLICT (id) DO UPDATE SET
         full_name = EXCLUDED.full_name,
-        email = EXCLUDED.email;
+        email = EXCLUDED.email,
+        roll_number = COALESCE(EXCLUDED.roll_number, public.participants.roll_number),
+        batch_number = COALESCE(EXCLUDED.batch_number, public.participants.batch_number),
+        updated_at = timezone('utc'::text, now());
     RETURN NEW;
 END;
 $$ LANGUAGE plpgsql SECURITY DEFINER;

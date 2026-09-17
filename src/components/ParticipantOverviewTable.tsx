@@ -502,15 +502,21 @@ export default function ParticipantOverviewTable({
                               </span>
                               <div className="flex flex-wrap items-center gap-1.5 mt-0.5 text-[10px]">
                                 {p.roll_number ? (
-                                  <span className="font-mono font-bold px-1.5 py-0.2 rounded bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-300 border border-slate-200 dark:border-slate-700">
+                                  <span className="font-mono font-bold px-1.5 py-0.5 rounded bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-300 border border-slate-200 dark:border-slate-700">
                                     Roll: {p.roll_number}
                                   </span>
                                 ) : (
-                                  <span className="italic text-slate-400">No Roll No</span>
+                                  <span className="font-semibold px-1.5 py-0.5 rounded bg-amber-50 dark:bg-amber-950/50 text-amber-700 dark:text-amber-400 border border-amber-200 dark:border-amber-800">
+                                    ⚠️ Missing Roll No
+                                  </span>
                                 )}
-                                {p.batch_number && (
-                                  <span className="font-medium px-1.5 py-0.2 rounded bg-indigo-50 dark:bg-indigo-950/60 text-indigo-700 dark:text-indigo-300 border border-indigo-200/60 dark:border-indigo-800/60">
+                                {p.batch_number ? (
+                                  <span className="font-medium px-1.5 py-0.5 rounded bg-indigo-50 dark:bg-indigo-950/60 text-indigo-700 dark:text-indigo-300 border border-indigo-200/60 dark:border-indigo-800/60">
                                     Batch: {p.batch_number}
+                                  </span>
+                                ) : (
+                                  <span className="font-semibold px-1.5 py-0.5 rounded bg-amber-50 dark:bg-amber-950/50 text-amber-700 dark:text-amber-400 border border-amber-200 dark:border-amber-800">
+                                    ⚠️ Missing Batch
                                   </span>
                                 )}
                               </div>
@@ -657,7 +663,7 @@ export default function ParticipantOverviewTable({
                                     <span>Daily Protocol Logs for {p.full_name}</span>
                                   </h4>
                                   <p className="text-[11px] text-slate-500 dark:text-slate-400">
-                                    Roll No: <strong className="text-slate-700 dark:text-slate-200">{p.roll_number || "N/A"}</strong> • Batch: <strong className="text-slate-700 dark:text-slate-200">{p.batch_number || "N/A"}</strong>
+                                    Roll No: <strong className={p.roll_number ? "text-slate-700 dark:text-slate-200 font-mono" : "text-amber-600 dark:text-amber-400 italic"}>{p.roll_number || "Not Provided"}</strong> • Batch: <strong className={p.batch_number ? "text-slate-700 dark:text-slate-200" : "text-amber-600 dark:text-amber-400 italic"}>{p.batch_number || "Not Provided"}</strong>
                                   </p>
                                 </div>
                                 <span className="text-xs font-medium text-slate-500">

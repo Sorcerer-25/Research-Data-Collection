@@ -19,6 +19,8 @@ export default function LogSleepPage() {
     if (!authLoading) {
       if (!user) {
         router.push("/login?redirect=/log-sleep");
+      } else if (!user.roll_number || !user.batch_number) {
+        router.push("/dashboard");
       } else {
         getParticipantLogs(user.id).then((data) => {
           setLogs(data);
